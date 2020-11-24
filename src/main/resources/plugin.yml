@@ -1,0 +1,10 @@
+name: Bedwars
+version: ${project.version}
+main: com.gabe.bedwars.Bedwars
+api-version: 1.16
+authors: [ gabe ]
+commands:
+  bw:
+    description: Main bedwars command
+  bwa:
+    description: Admin bedwars command
