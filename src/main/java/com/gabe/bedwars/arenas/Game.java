@@ -11,8 +11,6 @@ import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
-import org.bukkit.util.Vector;
 
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
@@ -150,21 +148,21 @@ public class Game {
                         String color;
                         if (timer % 5 == 0 && timer > 10) {
                             color = "&a";
-                            brodcastTitle(color + timer);
+                            broadcastTitle(color + timer);
 
                         } else if (timer < 11 && timer >= 6) {
                             color = "&e";
-                            brodcastTitle(color + timer);
+                            broadcastTitle(color + timer);
 
                         } else if (timer < 6) {
                             color = "&c";
-                            brodcastTitle(color + timer);
+                            broadcastTitle(color + timer);
 
                         }
 
                     }
                 }else{
-                    brodcast("&cCanceling game! Not enough players. ("+players.size()+"/"+arena.getMinPlayers()+")");
+                    broadcast("&cCanceling game! Not enough players. ("+players.size()+"/"+arena.getMinPlayers()+")");
                     timer = -1;
                     cancel();
                 }
@@ -177,7 +175,11 @@ public class Game {
     /* ----------- PLAYERS ------------ */
 
     public void playerDied(Player player, String message){
-        brodcast(player.getName()+" "+message+". "+(getTeam(player).hasBed() ? "":"&f&lFINAL KILL"));
+        broadcast(player.getName()+" "+message+". "+(getTeam(player).hasBed() ? "":"&f&lFINAL KILL"));
+        if(!getTeam(player).hasBed()){
+            player.setGameMode(GameMode.SPECTATOR);
+            getTeam(player).playerDied(player);
+        }
         player.teleport(getTeam(player).getSpawn());
 
         if(!getTeam(player).hasBed()){
@@ -190,7 +192,7 @@ public class Game {
     public void playerBrokeBed(Player player, GameTeam team){
         team.setHasBed(false);
         statsManager.playerBrokeBed(player);
-        brodcastWithoutPrefix("&f&lBED DESTRUCTION > " + team.getColor() + team.getName() + "'s &cbed was destroyed by " + player.getName() + "!");
+        broadcastWithoutPrefix("&f&lBED DESTRUCTION > " + team.getColor() + team.getName() + "'s &cbed was destroyed by " + player.getName() + "!");
         updateScoreboards();
     }
 
@@ -202,7 +204,7 @@ public class Game {
                 updateScoreboards();
 
                 player.teleport(arena.getLobbyLocation());
-                brodcast(player.getName() + " has joined the game! &6(" + players.size() + "/" + arena.getMinPlayers() + ")");
+                broadcast(player.getName() + " has joined the game! &6(" + players.size() + "/" + arena.getMinPlayers() + ")");
                 if (players.size() >= arena.getMinPlayers()){
                     hasPlayers = true;
                     if(timer== -1) {
@@ -227,31 +229,30 @@ public class Game {
         }
         statsManager.removePlayer(player);
         player.teleport(arena.getMainLobbyLocation());
-        brodcast(player.getName()+" has left the game! &6("+players.size()+"/"+arena.getMinPlayers()+")");
+        broadcast(player.getName()+" has left the game! &6("+players.size()+"/"+arena.getMinPlayers()+")");
         updateScoreboards();
     }
 
     /* ------------ MISC ------------- */
-    public void brodcast(String msg){
+    public void broadcast(String msg){
         String message = "&8[&6BW&8] &8> &e"+msg;
         for(Player p : players) {
             p.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
         }
     }
 
-    public void brodcastWithoutPrefix(String msg){
+    public void broadcastWithoutPrefix(String msg){
         String message = msg;
         for(Player p : players) {
             p.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
         }
     }
 
-    public void brodcastTitle(String title){
+    public void broadcastTitle(String title){
         for(Player p : players) {
             p.sendTitle(ChatColor.translateAlternateColorCodes('&', title),"",1,20,1);
         }
     }
-
 
     private void startGame(){
         state = GameState.PLAYING;

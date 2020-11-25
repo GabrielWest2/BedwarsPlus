@@ -43,7 +43,7 @@ public class ScoreboardFactory {
             ver.setScore(4);
             Score space3 = objective.getScore("    "); //Get a fake offline player
             space3.setScore(3);
-            Score server = objective.getScore(ChatColor.YELLOW+"www.yourserver.net"); //Get a fake offline player
+            Score server = objective.getScore(ChatColor.YELLOW+"www.gbookpro.com"); //Get a fake offline player
             server.setScore(2);
 
         }else{
@@ -53,7 +53,7 @@ public class ScoreboardFactory {
 
             objective.setDisplayName(ChatColor.translateAlternateColorCodes('&',"&e&lBEDWARS"));
 
-            Score server = objective.getScore(ChatColor.YELLOW+"www.yourserver.net"); //Get a fake offline player
+            Score server = objective.getScore(ChatColor.YELLOW+"www.gbookpro.com"); //Get a fake offline player
             server.setScore(1);
 
             Score space = objective.getScore(""); //Get a fake offline player
@@ -71,7 +71,7 @@ public class ScoreboardFactory {
             int line = 7;
             for(GameTeam team : game.getTeams()){
 
-                Score t = objective.getScore(team.getColor()+team.getName().substring(0,1)+" "+ChatColor.WHITE+team.getName()+": "+(team.hasBed() ? ChatColor.GREEN+"✓"  : (team.getPlayers().size()==0 ? ChatColor.RED+"✕" : ChatColor.GREEN+""+team.getPlayers().size() )) +" "+ChatColor.GRAY+(team.getPlayers().contains(player) ? "YOU" : "")); //Get a fake offline player
+                Score t = objective.getScore(team.getColor()+team.getName().substring(0,1)+" "+ChatColor.WHITE+team.getName()+": "+(team.hasBed() ? ChatColor.GREEN+"✓"  : (team.getAlivePlayers().size()==0 ? ChatColor.RED+"✕" : ChatColor.GREEN+""+team.getAlivePlayers().size() )) +" "+ChatColor.GRAY+(team.getPlayers().contains(player) ? "YOU" : "")); //Get a fake offline player
                 t.setScore(line);
                 line++;
             }

@@ -11,6 +11,7 @@ import java.util.Set;
 public class GameTeam {
 
     private Set<Player> players;
+    private Set<Player> alivePlayers;
     private Set<Player> spec;
     private final String name;
     private final ChatColor color;
@@ -20,12 +21,21 @@ public class GameTeam {
     private boolean hasBed = true;
     public GameTeam(String name, ChatColor color, Location spawn, Location generator, Location bed){
         players = new HashSet<>();
+        alivePlayers = new HashSet<>();
         spec = new HashSet<>();
         this.name = name;
         this.color = color;
         this.spawn = spawn;
         this.generator = generator;
         this.bed = bed;
+    }
+
+    public void playerDied(Player player){
+        alivePlayers.remove(player);
+    }
+
+    public Set<Player> getAlivePlayers(){
+        return Collections.unmodifiableSet(alivePlayers);
     }
 
     public Location getBed(){
@@ -53,6 +63,7 @@ public class GameTeam {
 
     public void addPlayer(Player player){
         players.add(player);
+        alivePlayers.remove(player);
     }
 
     public void died(Player player){
@@ -61,9 +72,8 @@ public class GameTeam {
 
     public void removePlayer(Player player){
         players.remove(player);
-        if(spec.contains(player)){
-            spec.remove(player);
-        }
+        spec.remove(player);
+        alivePlayers.remove(player);
         player.setDisplayName(player.getName());
         player.setPlayerListName(player.getName());
     }
@@ -85,7 +95,7 @@ public class GameTeam {
 
     public void setUpPlayers(){
         for(Player player : players){
-            player.setPlayerListName(color+"["+name.toUpperCase()+"] "+player.getName());
+            player.setPlayerListName(color+player.getName());
         }
     }
 }

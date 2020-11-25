@@ -1,9 +1,11 @@
 package com.gabe.bedwars;
 
 import com.gabe.bedwars.arenas.Arena;
+import com.gabe.bedwars.listeners.ShopListener;
 import com.gabe.bedwars.managers.ArenaManager;
 import com.gabe.bedwars.arenas.Game;
 import com.gabe.bedwars.listeners.GameListener;
+import com.gabe.bedwars.shop.ShopCreator;
 import com.gabe.bedwars.tabcomplete.AdminTabComplete;
 import com.gabe.bedwars.team.Team;
 import org.bukkit.*;
@@ -18,6 +20,10 @@ public final class Bedwars extends JavaPlugin {
     private static GameManager gameManager;
     public static GameManager getGameManager(){
         return gameManager;
+    }
+    public static ShopCreator shopCreator;
+    public static ShopCreator getShopCreator(){
+        return shopCreator;
     }
     String help  =  "\n&8*------------------------------------* \n" +
                     "&cBedwars Admin Help: &6v"+this.getDescription().getVersion()+"\n" +
@@ -39,7 +45,9 @@ public final class Bedwars extends JavaPlugin {
         arenaManager = new ArenaManager(this);
         arenaManager.deserialize();
         gameManager = new GameManager(this);
+        shopCreator = new ShopCreator();
         Bukkit.getPluginManager().registerEvents(new GameListener(this), this);
+        Bukkit.getPluginManager().registerEvents(new ShopListener(), this);
     }
 
     public void onDisable() {
