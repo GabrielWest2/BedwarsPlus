@@ -119,6 +119,7 @@ public class GameListener implements Listener {
                 Bedwars.sendMessage(player,"&cYou cant place blocks at this time!");
                 return;
             }
+
           game.getBlockManager().placedBlock(event.getBlock().getLocation());
         }
     }
@@ -223,6 +224,15 @@ public class GameListener implements Listener {
                 if(player.getKiller() != null){
                     Player attacker = player.getKiller();
                     game.playerDied(event.getEntity(), "was murdered by "+game.getTeam(attacker).getColor()+ attacker.getName());
+                    for(ItemStack i : player.getInventory()){
+                        if(i.getType() == Material.IRON_INGOT || i.getType() == Material.GOLD_INGOT || i.getType() == Material.EMERALD || i.getType() == Material.DIAMOND){
+                            player.getKiller().getInventory().addItem(i);
+                            player.getInventory().remove(i);
+
+                        }else{
+                            player.getInventory().remove(i);
+                        }
+                    }
                     Bedwars.sendMessage(attacker,"&aYou killed "+event.getEntity().getName()+"!");
                     if(game.getTeam(player).hasBed()){
                         game.getStatsManager().playerGotKill(attacker);

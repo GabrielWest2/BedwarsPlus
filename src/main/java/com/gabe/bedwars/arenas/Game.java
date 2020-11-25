@@ -16,18 +16,15 @@ import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Game {
+    private final GameBlockManager blockManager;
+    private final GameStatsManager statsManager;
+    private boolean hasPlayers = false;
     private final Arena arena;
     private final Bedwars plugin;
+    private int timer = -1;
     private Set<Player> players;
     private Set<GameTeam> teams;
     private GameState state;
-    private int timer = -1;
-    private boolean hasPlayers = false;
-    private final GameBlockManager blockManager;
-    private final GameStatsManager statsManager;
-    public GameBlockManager getBlockManager(){
-        return  blockManager;
-    }
 
     public Game(Arena arena, Bedwars plugin){
         blockManager = new GameBlockManager(plugin);
@@ -43,12 +40,18 @@ public class Game {
         //Start coroutines
         foodCheck();
         teamGens();
+        emeraldGens();
+        diamondGens();
     }
 
     /* ------------ GETTERS ------------- */
 
     public Arena getArena(){
         return arena;
+    }
+
+    public GameBlockManager getBlockManager(){
+        return  blockManager;
     }
 
     public GameStatsManager getStatsManager(){
@@ -90,6 +93,34 @@ public class Game {
 
     /* ---------- COROUTINES ----------- */
 
+    public void emeraldGens(){
+        new BukkitRunnable()
+        {
+            public void run()
+            {
+                if(state == GameState.PLAYING) {
+                    for (Location loc : arena.getEmeraldGens()) {
+                        loc.getWorld().dropItem(loc.clone().add(0,0.4,0), new ItemStack(Material.EMERALD, 1));
+                    }
+                }
+            }
+        }.runTaskTimer(plugin,0L,45*20L);
+    }
+
+    public void diamondGens(){
+        new BukkitRunnable()
+        {
+            public void run()
+            {
+                if(state == GameState.PLAYING) {
+                    for (Location loc : arena.getDiamondGens()) {
+                        loc.getWorld().dropItem(loc.clone().add(0,0.4,0), new ItemStack(Material.DIAMOND, 1));
+                    }
+                }
+            }
+        }.runTaskTimer(plugin,0L,20*20L);
+    }
+
     public void teamGens(){
         new BukkitRunnable()
         {
@@ -107,7 +138,7 @@ public class Game {
 
                 //Use cancel(); if you want to close this repeating task.
             }
-        }.runTaskTimer(plugin,0L,4*20L);
+        }.runTaskTimer(plugin,0L,1*20L);
     }
 
     public void foodCheck(){

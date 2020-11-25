@@ -8,10 +8,15 @@ import com.gabe.bedwars.listeners.GameListener;
 import com.gabe.bedwars.shop.ShopCreator;
 import com.gabe.bedwars.tabcomplete.AdminTabComplete;
 import com.gabe.bedwars.team.Team;
+import com.gmail.filoghost.holographicdisplays.api.Hologram;
+import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Villager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class Bedwars extends JavaPlugin {
@@ -41,6 +46,7 @@ public final class Bedwars extends JavaPlugin {
                     "&8*------------------------------------* \n";
 
     public void onEnable() {
+
         getCommand("bwa").setTabCompleter(new AdminTabComplete());
         arenaManager = new ArenaManager(this);
         arenaManager.deserialize();
@@ -48,6 +54,8 @@ public final class Bedwars extends JavaPlugin {
         shopCreator = new ShopCreator();
         Bukkit.getPluginManager().registerEvents(new GameListener(this), this);
         Bukkit.getPluginManager().registerEvents(new ShopListener(), this);
+
+
     }
 
     public void onDisable() {
@@ -267,6 +275,23 @@ public final class Bedwars extends JavaPlugin {
                         }else{
                             sendMessage(player, "&cIncorrect Usage. Do /bwa setbed <name> <team>");
                         }
+                    }
+                    else if(args[0].equalsIgnoreCase("additemshop")){
+                        Villager villager = (Villager) player.getLocation().getWorld().spawnEntity(player.getLocation(), EntityType.VILLAGER);
+                        villager.setAI(false);
+                        ArmorStand as = (ArmorStand) player.getWorld().spawn(player.getLocation().subtract(0,0.3,0), ArmorStand.class);
+                        as.setVisible(false);
+                        as.setCustomName(ChatColor.GOLD+""+ChatColor.BOLD+"RIGHT CLICK");
+                        as.setCustomNameVisible(true);
+                        as.setGravity(false);
+                        as.setCollidable(false);
+
+                        ArmorStand as1 = (ArmorStand) player.getWorld().spawn(player.getLocation(), ArmorStand.class);
+                        as1.setVisible(false);
+                        as1.setCustomName(ChatColor.AQUA+"Item Shop");
+                        as1.setCustomNameVisible(true);
+                        as1.setGravity(false);
+                        as1.setCollidable(false);
                     }
                     else {
                         sendMessage(player, "&cThat is not a command. Try /bwa help.");
