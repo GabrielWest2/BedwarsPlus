@@ -161,6 +161,8 @@ public class UpgradeCreator {
             case 3:
                 price = 16;
                 break;
+            default:
+                break;
         }
 
         if(level != 4) {

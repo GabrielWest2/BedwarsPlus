@@ -11,7 +11,7 @@ public class GameBlockManager {
 
     private Set<Location> blocks;
 
-    public GameBlockManager(Bedwars plugin){
+    public GameBlockManager(){
         blocks = new HashSet<>();
     }
 

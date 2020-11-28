@@ -34,8 +34,8 @@ public class Game {
     private GameState state;
 
     public Game(Arena arena, Bedwars plugin) {
-        blockManager = new GameBlockManager(plugin);
-        statsManager = new GameStatsManager(plugin);
+        blockManager = new GameBlockManager();
+        statsManager = new GameStatsManager();
         upgradesManager = new TeamUpgradesManager();
         state = GameState.WAITING;
         this.arena = arena;
@@ -372,7 +372,6 @@ public class Game {
         state = GameState.PLAYING;
         List<Player> playersToAdd = new ArrayList<>();
         playersToAdd.addAll(players);
-        int teamSize = Math.round(players.size() + 0.0f / arena.getTeams().size());
 
         while (playersToAdd.size() > 0) {
             for (GameTeam team : teams) {

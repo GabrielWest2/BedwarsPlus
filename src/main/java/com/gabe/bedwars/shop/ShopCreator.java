@@ -9,10 +9,8 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
-import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.potion.PotionType;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -115,6 +113,8 @@ public class ShopCreator {
                  break;
              case EMERALD:
                  lore.add(ChatColor.GRAY+"Cost: "+ChatColor.DARK_GREEN+item.getPrice()+" "+getMatName(item));
+                 break;
+             default:
                  break;
          }
          lore.add(" ");

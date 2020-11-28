@@ -10,7 +10,7 @@ public class GameStatsManager {
     private HashMap<Player, GameStats> statsMap;
 
 
-    public GameStatsManager(Bedwars plugin){
+    public GameStatsManager(){
         statsMap = new HashMap<>();
     }
 

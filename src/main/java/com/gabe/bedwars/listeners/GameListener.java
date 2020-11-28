@@ -11,13 +11,9 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Fireball;
-import org.bukkit.entity.NPC;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
@@ -28,7 +24,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
@@ -115,7 +110,7 @@ public class GameListener implements Listener {
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent event) {
         if(event.getBlock().getType() == Material.TNT){
-            TNTPrimed tnt = event.getBlock().getWorld().spawn(event.getBlock().getLocation(), TNTPrimed.class);
+            event.getBlock().getWorld().spawn(event.getBlock().getLocation(), TNTPrimed.class);
             event.getBlock().setType(Material.AIR);
         }else {
 
@@ -220,7 +215,7 @@ public class GameListener implements Listener {
                 player.setFallDistance(0F);
                 player.setHealth(20);
                 player.setVelocity(new Vector(0, 0, 0));
-                player.teleport(game.getTeam(player).getSpawn());
+                player.teleport(spawn);
                 if (player.getKiller() != null) {
                     Player attacker = player.getKiller();
                     game.playerDied(event.getEntity(), "was murdered by " + game.getTeam(attacker).getColor() + attacker.getName());

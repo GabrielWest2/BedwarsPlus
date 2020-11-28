@@ -14,10 +14,6 @@ import org.bukkit.inventory.ItemStack;
 
 public class UpgradeListener implements Listener {
 
-    public UpgradeListener(){
-        GameManager gameManager = Bedwars.getGameManager();
-    }
-
     @EventHandler
     public void upgradeInteract(InventoryClickEvent event){
         if(!event.getView().getTitle().contains("Upgrades")){
@@ -99,7 +95,6 @@ public class UpgradeListener implements Listener {
                 price = 30;
                 break;
             default:
-                price = 5;
                 break;
         }
         return price;
@@ -116,6 +111,8 @@ public class UpgradeListener implements Listener {
                 break;
             case 3:
                 price = 16;
+                break;
+            default:
                 break;
         }
         return price;

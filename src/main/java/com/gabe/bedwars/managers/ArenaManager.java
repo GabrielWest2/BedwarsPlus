@@ -23,7 +23,6 @@ public class ArenaManager {
     private FileConfiguration arenaData;
 
     public ArenaManager(Bedwars plugin) {
-        FileConfiguration config = plugin.getConfig();
         this.arenaSet = new HashSet<>();
         arenaYml = new File(plugin.getDataFolder() + "/arenas.yml");
         arenaData = YamlConfiguration.loadConfiguration(arenaYml);
