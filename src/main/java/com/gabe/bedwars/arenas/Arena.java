@@ -14,8 +14,6 @@ public class Arena {
     private final String name;
     private Location lobbyLocation = null;
     private Location mainLobbyLocation = null;
-    private Location pos1 = null;
-    private Location pos2 = null;
     private Set<Player> players = null;
     private Set<Team> teams = null;
     private Set<Location> diamondGens;
@@ -101,19 +99,4 @@ public class Arena {
         return emeraldGens;
     }
 
-    public Location getPos2() {
-        return pos2;
-    }
-
-    public void setPos2(Location pos2) {
-        this.pos2 = pos2;
-    }
-
-    public Location getPos1() {
-        return pos1;
-    }
-
-    public void setPos1(Location pos1) {
-        this.pos1 = pos1;
-    }
 }

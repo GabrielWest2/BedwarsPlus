@@ -1,5 +1,6 @@
 name: Bedwars
 version: ${project.version}
+softdepend: [Multiverse-Core, My_Worlds]
 main: com.gabe.bedwars.Bedwars
 api-version: 1.16
 authors: [ gabe ]

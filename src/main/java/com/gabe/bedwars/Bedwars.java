@@ -40,7 +40,6 @@ public final class Bedwars extends JavaPlugin {
                     "&e/bwa &6debug\n" +
                     "&e/bwa &6setlobby <name>\n" +
                     "&e/bwa &6setmainlobby <name>\n" +
-                    "&e/bwa &6addregion <name> <loc1/loc2>\n" +
                     "&e/bwa &6addteam <name> <team name> <color>\n" +
                     "&e/bwa &6setspawn <name> <team>\n" +
                     "&e/bwa &6setteamgen <name> <team>\n" +

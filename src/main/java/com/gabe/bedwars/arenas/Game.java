@@ -12,6 +12,8 @@ import org.bukkit.*;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -285,7 +287,11 @@ public class Game {
                 statsManager.addPlayer(player);
                 updateScoreboards();
 
-                player.teleport(arena.getLobbyLocation());
+                if(arena.getLobbyLocation() != null) {
+                    player.teleport(arena.getLobbyLocation());
+                }else{
+                    Bedwars.sendMessage(player, "&cNo lobby has been set!");
+                }
                 broadcast(player.getName() + " has joined the game! &6(" + players.size() + "/" + arena.getMinPlayers() + ")");
                 if (players.size() >= arena.getMinPlayers()) {
                     hasPlayers = true;
@@ -355,9 +361,10 @@ public class Game {
         for (GameTeam team : teams) {
             upgradesManager.addTeam(team);
             team.teleportPlayers();
+
         }
         updateScoreboards();
-
+        equipArmor();
     }
 
     public void updateScoreboards() {
@@ -366,4 +373,34 @@ public class Game {
         }
     }
 
+    public void equipArmor(){
+        for(GameTeam team : teams){
+            ItemStack helm = new ItemStack(Material.LEATHER_HELMET);
+            LeatherArmorMeta helmM = (LeatherArmorMeta) helm.getItemMeta();
+            helmM.setColor(Bedwars.translateChatColorToColor(team.getColor()));
+            helm.setItemMeta(helmM);
+
+            ItemStack chest = new ItemStack(Material.LEATHER_CHESTPLATE);
+            LeatherArmorMeta chestM = (LeatherArmorMeta) chest.getItemMeta();
+            chestM.setColor(Bedwars.translateChatColorToColor(team.getColor()));
+            chest.setItemMeta(chestM);
+
+            ItemStack leg = new ItemStack(Material.LEATHER_LEGGINGS);
+            LeatherArmorMeta legM = (LeatherArmorMeta)  leg.getItemMeta();
+            legM.setColor(Bedwars.translateChatColorToColor(team.getColor()));
+            leg.setItemMeta(legM);
+
+            ItemStack boot = new ItemStack(Material.LEATHER_BOOTS);
+            LeatherArmorMeta bootM = (LeatherArmorMeta)  boot.getItemMeta();
+            bootM.setColor(Bedwars.translateChatColorToColor(team.getColor()));
+            boot.setItemMeta(bootM);
+
+            for (Player player : team.getPlayers()){
+                player.getEquipment().setHelmet(helm);
+                player.getEquipment().setChestplate(chest);
+                player.getEquipment().setLeggings(leg);
+                player.getEquipment().setBoots(boot);
+            }
+        }
+    }
 }

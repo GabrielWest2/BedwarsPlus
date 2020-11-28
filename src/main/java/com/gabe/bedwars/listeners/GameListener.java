@@ -19,12 +19,15 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
 
@@ -251,6 +254,27 @@ public class GameListener implements Listener {
         event.setCancelled(true);
         if(game != null){
             Bedwars.sendMessage(player, "You can not sleep in the beds!");
+        }
+    }
+
+    @EventHandler
+    public void invclick(InventoryClickEvent event) {
+        if (event.getView().getTitle().contains("Shop")) {
+            return;
+        }
+        if (event.getView().getTitle().contains("Upgrades")) {
+            return;
+        }
+        if (event.getCursor() == null) {
+            return;
+        }
+
+        Player player = (Player) event.getWhoClicked();
+
+        if(gameManager.getGame(player) !=null){
+            if(event.getSlotType() == InventoryType.SlotType.ARMOR){
+                event.setCancelled(true);
+            }
         }
     }
 }
