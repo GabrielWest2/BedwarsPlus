@@ -1,5 +1,5 @@
 # Bedwars 
-Paper bedwars minigame plugin!
+Paper bedwars minigame plugin!\n
 Supported version
 
 
