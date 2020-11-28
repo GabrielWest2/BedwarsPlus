@@ -8,11 +8,9 @@ import java.util.HashMap;
 
 public class GameStatsManager {
     private HashMap<Player, GameStats> statsMap;
-    private final Bedwars plugin;
 
 
     public GameStatsManager(Bedwars plugin){
-        this.plugin = plugin;
         statsMap = new HashMap<>();
     }
 

@@ -1,10 +1,7 @@
 package com.gabe.bedwars.listeners;
 
 import com.gabe.bedwars.Bedwars;
-import com.gabe.bedwars.shop.MoneyType;
-import com.gabe.bedwars.shop.ShopItem;
 import com.gabe.bedwars.shop.ShopPage;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;

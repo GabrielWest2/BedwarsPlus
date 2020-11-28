@@ -20,7 +20,11 @@ public enum ShopPage {
             new ShopItem(Material.IRON_SWORD,7,1,"CHOOP CHOOP!", MoneyType.GOLD),
             new ShopItem(Material.DIAMOND_SWORD,3,1,"CHOOPEDYEDY!", MoneyType.EMERALD)
     )),
-    ARMOR(3,Material.CHAINMAIL_BOOTS, null),
+    ARMOR(3,Material.CHAINMAIL_BOOTS,  Arrays.asList(
+            new ShopItem(Material.CHAINMAIL_BOOTS,40,1,"Permanent chainmail armor.", MoneyType.IRON),
+            new ShopItem(Material.IRON_BOOTS,12,1,"Permanent iron armor.", MoneyType.GOLD),
+            new ShopItem(Material.DIAMOND_BOOTS,6,1,"Permanent diamond armor.", MoneyType.EMERALD))
+    ),
     TOOLS(4,Material.STONE_PICKAXE, Arrays.asList(
             new ShopItem(Material.SHEARS,20,1,"Great for shearing sheap.", MoneyType.IRON),
             new ShopItem(Material.STONE_PICKAXE,10,1,"Very slow pic.", MoneyType.IRON),

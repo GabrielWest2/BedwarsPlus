@@ -2,10 +2,8 @@ package com.gabe.bedwars.listeners;
 
 import com.gabe.bedwars.Bedwars;
 import com.gabe.bedwars.GameManager;
-import com.gabe.bedwars.managers.TeamUpgradesManager;
 import com.gabe.bedwars.upgrade.TeamUpgrades;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;

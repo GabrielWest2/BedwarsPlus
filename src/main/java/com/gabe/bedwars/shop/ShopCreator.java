@@ -8,7 +8,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -65,6 +64,7 @@ public class ShopCreator {
                 inv.addItem(createItem(item, player));
             }
         }
+
         inv.setItem(9, r);
         inv.setItem(17, r);
 

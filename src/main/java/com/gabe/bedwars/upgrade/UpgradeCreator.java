@@ -1,9 +1,5 @@
 package com.gabe.bedwars.upgrade;
 
-import com.gabe.bedwars.shop.ShopItem;
-import com.gabe.bedwars.shop.ShopPage;
-import com.gabe.bedwars.team.GameTeam;
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -13,7 +9,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class UpgradeCreator {

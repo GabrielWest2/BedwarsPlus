@@ -1,7 +1,6 @@
 package com.gabe.bedwars.managers;
 
 import com.gabe.bedwars.Bedwars;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 
@@ -10,11 +9,9 @@ import java.util.Set;
 
 public class GameBlockManager {
 
-    private final Bedwars plugin;
     private Set<Location> blocks;
 
     public GameBlockManager(Bedwars plugin){
-        this.plugin = plugin;
         blocks = new HashSet<>();
     }
 

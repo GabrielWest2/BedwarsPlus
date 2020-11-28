@@ -1,18 +1,19 @@
 package com.gabe.bedwars;
 
 import com.gabe.bedwars.arenas.Arena;
+import com.gabe.bedwars.arenas.Game;
+import com.gabe.bedwars.listeners.GameListener;
 import com.gabe.bedwars.listeners.ShopListener;
 import com.gabe.bedwars.listeners.UpgradeListener;
 import com.gabe.bedwars.managers.ArenaManager;
-import com.gabe.bedwars.arenas.Game;
-import com.gabe.bedwars.listeners.GameListener;
 import com.gabe.bedwars.shop.ShopCreator;
 import com.gabe.bedwars.tabcomplete.AdminTabComplete;
 import com.gabe.bedwars.team.Team;
 import com.gabe.bedwars.upgrade.UpgradeCreator;
-import com.gmail.filoghost.holographicdisplays.api.Hologram;
-import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Color;
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.ArmorStand;
