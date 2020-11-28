@@ -28,7 +28,7 @@ public final class Bedwars extends JavaPlugin {
     private static GameManager gameManager;
     public static ShopCreator shopCreator;
     public static UpgradeCreator upgradeCreator;
-    String help = "\n&8*------------------------------------* \n" +
+    private String help = "\n&8*------------------------------------* \n" +
             "&cBedwars Admin Help: &6v" + this.getDescription().getVersion() + "\n" +
             "&e/bwa &6create <name> <minplayers> <maxplayers>\n" +
             "&e/bwa &6debug\n" +
@@ -65,7 +65,7 @@ public final class Bedwars extends JavaPlugin {
         gameManager = new GameManager(this);
         shopCreator = new ShopCreator();
         upgradeCreator = new UpgradeCreator();
-        Bukkit.getPluginManager().registerEvents(new GameListener(this), this);
+        Bukkit.getPluginManager().registerEvents(new GameListener(), this);
         Bukkit.getPluginManager().registerEvents(new ShopListener(), this);
         Bukkit.getPluginManager().registerEvents(new UpgradeListener(), this);
 

@@ -19,8 +19,8 @@ import java.util.*;
 public class ArenaManager {
 
     private final Set<Arena> arenaSet;
-    File arenaYml;
-    FileConfiguration arenaData;
+    private File arenaYml;
+    private FileConfiguration arenaData;
 
     public ArenaManager(Bedwars plugin) {
         FileConfiguration config = plugin.getConfig();

@@ -35,7 +35,7 @@ import java.util.List;
 public class GameListener implements Listener {
     private final GameManager gameManager;
 
-    public GameListener(Bedwars plugin) {
+    public GameListener() {
         this.gameManager = Bedwars.getGameManager();
     }
 

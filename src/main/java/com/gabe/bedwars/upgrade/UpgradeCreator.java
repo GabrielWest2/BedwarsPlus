@@ -64,7 +64,7 @@ public class UpgradeCreator {
 
         ItemStack prot = new ItemStack(Material.IRON_CHESTPLATE);
         ItemMeta protm = prot.getItemMeta();
-        protm.setDisplayName(getName("Reinforced Armor", upgrades.hasSharp()));
+        protm.setDisplayName(getName("Reinforced Armor", (upgrades.getProtLevel()>0)));
         List<String> lore1 = new ArrayList<>();
         lore1.add(ChatColor.GRAY+"Your team permanently gains");
         lore1.add(ChatColor.GRAY+"Protection on all armor pieces.");
@@ -92,7 +92,7 @@ public class UpgradeCreator {
 
         ItemStack mine = new ItemStack(Material.GOLDEN_PICKAXE);
         ItemMeta minem = mine.getItemMeta();
-        minem.setDisplayName(getName("Maniac Miner", upgrades.hasSharp()));
+        minem.setDisplayName(getName("Maniac Miner", (upgrades.getManiacMiner()>0)));
         List<String> lore2 = new ArrayList<>();
         lore2.add(ChatColor.GRAY+"All players on your team");
         lore2.add(ChatColor.GRAY+"permanently gain Haste.");
@@ -112,6 +112,34 @@ public class UpgradeCreator {
                 inv.setItem(12 + 9, r);
             }else{
                 inv.setItem(12 + 9, o);
+            }
+        }
+
+        ItemStack gen = new ItemStack(Material.FURNACE);
+        ItemMeta genm = gen.getItemMeta();
+        genm.setDisplayName(getName("Super Forge", (upgrades.getGenLevel()>0)));
+        List<String> lore3 = new ArrayList<>();
+        lore3.add(ChatColor.GRAY+"Upgrade resource spawning on");
+        lore3.add(ChatColor.GRAY+"your island.");
+        lore3.add(" ");
+        lore3.add(((upgrades.getGenLevel() >= 1) ? ChatColor.GREEN : ChatColor.GRAY)+"Tier 1: +50% Resources, "+ChatColor.AQUA+"4 Diamonds");
+        lore3.add(((upgrades.getGenLevel() >= 2) ? ChatColor.GREEN : ChatColor.GRAY)+"Tier 1: +100% Resources, "+ChatColor.AQUA+"8 Diamonds");
+        lore3.add(((upgrades.getGenLevel() >= 3) ? ChatColor.GREEN : ChatColor.GRAY)+"Tier 1: Spawn emeralds, "+ChatColor.AQUA+"12 Diamonds");
+        lore3.add(((upgrades.getGenLevel() >= 4) ? ChatColor.GREEN : ChatColor.GRAY)+"Tier 1: +200% Resources, "+ChatColor.AQUA+"16 Diamonds");
+
+        lore3.add(" ");
+        lore3.add(hasteBottomText(player, upgrades.getManiacMiner()));
+        genm.setLore(lore3);
+        gen.setItemMeta(genm);
+
+        inv.setItem(13, gen);
+        if(upgrades.getGenLevel() == 4){
+            inv.setItem(13+9, s);
+        }else{
+            if(upgrades.getGenLevel() ==0) {
+                inv.setItem(13 + 9, r);
+            }else{
+                inv.setItem(13 + 9, o);
             }
         }
 

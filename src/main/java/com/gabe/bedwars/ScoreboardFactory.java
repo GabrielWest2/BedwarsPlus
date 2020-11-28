@@ -5,13 +5,17 @@ import com.gabe.bedwars.team.GameTeam;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.bukkit.scoreboard.*;
+import org.bukkit.scoreboard.DisplaySlot;
+import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.Score;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.ScoreboardManager;
 
 public class ScoreboardFactory {
 
-    static ScoreboardManager manager = Bukkit.getScoreboardManager();
 
     public static Scoreboard makeBoard(Player player, GameState state, Game game){
+        ScoreboardManager manager = Bukkit.getScoreboardManager();
         Scoreboard board = null;
         if(state==GameState.WAITING){
             board = manager.getNewScoreboard();
