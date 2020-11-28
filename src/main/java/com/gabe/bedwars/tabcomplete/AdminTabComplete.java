@@ -13,8 +13,7 @@ public class AdminTabComplete implements TabCompleter {
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if(sender instanceof Player){
             Player player = (Player) sender;
-            if(player.hasPermission("bedwars.admin")){
-                if(args.length==1){
+            if(player.hasPermission("bedwars.admin") && args.length==1){
                     List<String> cmds = new ArrayList<>();
 
                     //Arena commands
@@ -54,7 +53,6 @@ public class AdminTabComplete implements TabCompleter {
                         cmds.add("debug");
                     }
                     return cmds;
-                }
             }
         }
         return null;

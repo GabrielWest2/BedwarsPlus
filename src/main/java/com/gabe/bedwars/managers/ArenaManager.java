@@ -18,15 +18,12 @@ import java.util.*;
 
 public class ArenaManager {
 
-    private final Bedwars plugin;
-    private final FileConfiguration config;
     private final Set<Arena> arenaSet;
     File arenaYml;
     FileConfiguration arenaData;
 
     public ArenaManager(Bedwars plugin) {
-        this.plugin = plugin;
-        this.config = plugin.getConfig();
+        FileConfiguration config = plugin.getConfig();
         this.arenaSet = new HashSet<>();
         arenaYml = new File(plugin.getDataFolder() + "/arenas.yml");
         arenaData = YamlConfiguration.loadConfiguration(arenaYml);
