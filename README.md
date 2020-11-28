@@ -10,4 +10,4 @@ Supported version [1.16.4]
 /bwa addgen <arena name> <diamond/emerald> - Add a diammond or emerald generator  
 /bwa save <arena name> - Save the arena (do this after you have added the teams)
 # Teams
-/bwa addteam<arena name> <team name> <color>
+/bwa save <arena name> - Save the arena (do this after you have added the teams)
