@@ -17,6 +17,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
+
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -118,7 +119,7 @@ public class Game {
                     }
                 }
             }
-        }.runTaskTimer(plugin, 0L, 45 * 20L);
+        }.runTaskTimer(plugin, 0L, 60 * 20L);
     }
 
     public void diamondGens() {
@@ -165,7 +166,6 @@ public class Game {
                                     if (item == null) {
                                         continue;
                                     }
-                                    Bukkit.getLogger().info(item.getType().toString());
                                     if (!item.getEnchantments().containsKey(Enchantment.PROTECTION_ENVIRONMENTAL)) {
                                         item.addEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, upgradesManager.getUpgrades(team).getProtLevel());
                                     } else {
@@ -191,7 +191,7 @@ public class Game {
                             if (upgradesManager.getUpgrades(team).hasSharp()) {
                                 for (ItemStack item : player.getInventory()) {
                                     if (item != null) {
-                                        if (item.getType().toString().contains("SWORD") || item.getType().toString().contains("AXE")) {
+                                        if (item.getType().toString().contains("SWORD") || item.getType().toString().contains("_AXE")) {
                                             if (!item.getEnchantments().containsKey(Enchantment.DAMAGE_ALL)) {
                                                 item.addEnchantment(Enchantment.DAMAGE_ALL, 1);
                                             }
@@ -306,6 +306,7 @@ public class Game {
     }
 
     public void addPlayer(Player player) {
+        player.getEnderChest().setContents(new ItemStack[0]);
         if (getState() == GameState.WAITING) {
             if (players.size() < arena.getMaxPlayers()) {
                 players.add(player);

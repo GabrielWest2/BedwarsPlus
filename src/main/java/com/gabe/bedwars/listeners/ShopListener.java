@@ -39,6 +39,11 @@ public class ShopListener implements Listener {
             return;
         }
 
+        if(click.getItemMeta().getDisplayName().contains("Invisibility")){
+            player.getInventory().addItem(click);
+            return;
+        }
+
         if(isItem(click)){
             if(player.getInventory().containsAtLeast(getMat(click), getCost(click))) {
                 for(int i = 0; i<getCost(click);i++) {

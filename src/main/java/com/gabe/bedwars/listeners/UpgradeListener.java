@@ -73,6 +73,17 @@ public class UpgradeListener implements Listener {
                 }
             }
         }
+
+        if(click.getItemMeta().getDisplayName().contains("Super Forge")){
+            if (upgrades.getGenLevel() < 4) {
+                if(player.getInventory().contains(Material.DIAMOND, getPriceToUpgradeGen(upgrades.getGenLevel()))) {
+                    player.getInventory().removeItem(new ItemStack(Material.DIAMOND, getPriceToUpgradeGen(upgrades.getGenLevel())));
+                    upgrades.upgradeGen();
+                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 1);
+                    player.openInventory(Bedwars.getUpgradeCreator().createUpgradeShop(upgrades, player));
+                }
+            }
+        }
     }
 
     public int getPriceToUpgrade(int level){
@@ -89,6 +100,22 @@ public class UpgradeListener implements Listener {
                 break;
             default:
                 price = 5;
+                break;
+        }
+        return price;
+    }
+
+    public int getPriceToUpgradeGen(int level){
+        int price = 4;
+        switch (level){
+            case 1:
+                price = 8;
+                break;
+            case 2:
+                price = 12;
+                break;
+            case 3:
+                price = 16;
                 break;
         }
         return price;

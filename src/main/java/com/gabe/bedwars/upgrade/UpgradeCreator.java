@@ -123,12 +123,12 @@ public class UpgradeCreator {
         lore3.add(ChatColor.GRAY+"your island.");
         lore3.add(" ");
         lore3.add(((upgrades.getGenLevel() >= 1) ? ChatColor.GREEN : ChatColor.GRAY)+"Tier 1: +50% Resources, "+ChatColor.AQUA+"4 Diamonds");
-        lore3.add(((upgrades.getGenLevel() >= 2) ? ChatColor.GREEN : ChatColor.GRAY)+"Tier 1: +100% Resources, "+ChatColor.AQUA+"8 Diamonds");
-        lore3.add(((upgrades.getGenLevel() >= 3) ? ChatColor.GREEN : ChatColor.GRAY)+"Tier 1: Spawn emeralds, "+ChatColor.AQUA+"12 Diamonds");
-        lore3.add(((upgrades.getGenLevel() >= 4) ? ChatColor.GREEN : ChatColor.GRAY)+"Tier 1: +200% Resources, "+ChatColor.AQUA+"16 Diamonds");
+        lore3.add(((upgrades.getGenLevel() >= 2) ? ChatColor.GREEN : ChatColor.GRAY)+"Tier 2: +100% Resources, "+ChatColor.AQUA+"8 Diamonds");
+        lore3.add(((upgrades.getGenLevel() >= 3) ? ChatColor.GREEN : ChatColor.GRAY)+"Tier 3: Spawn emeralds, "+ChatColor.AQUA+"12 Diamonds");
+        lore3.add(((upgrades.getGenLevel() >= 4) ? ChatColor.GREEN : ChatColor.GRAY)+"Tier 4: +200% Resources, "+ChatColor.AQUA+"16 Diamonds");
 
         lore3.add(" ");
-        lore3.add(hasteBottomText(player, upgrades.getManiacMiner()));
+        lore3.add(genBottomText(player, upgrades.getGenLevel()));
         genm.setLore(lore3);
         gen.setItemMeta(genm);
 
@@ -147,6 +147,32 @@ public class UpgradeCreator {
 
 
         return inv;
+    }
+
+    public String genBottomText(Player player, int level){
+        int price = 4;
+        switch (level){
+            case 1:
+                price = 8;
+                break;
+            case 2:
+                price = 12;
+                break;
+            case 3:
+                price = 16;
+                break;
+        }
+
+        if(level != 4) {
+            if (player.getInventory().contains(Material.DIAMOND, price)) {
+                return ChatColor.YELLOW + "Click to buy!";
+            } else {
+                return ChatColor.RED + "You do not have enough diamonds!";
+            }
+        }else{
+            return ChatColor.GREEN+"Maxed out.";
+        }
+
     }
 
     public String getName(String string, boolean upgCase){
