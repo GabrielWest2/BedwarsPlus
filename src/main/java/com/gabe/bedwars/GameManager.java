@@ -9,10 +9,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class GameManager {
-    private final Bedwars plugin;
     private Set<Game> games;
     public GameManager(Bedwars plugin){
-        this.plugin = plugin;
         games = new HashSet<>();
         for(Arena a : plugin.getArenaManager().getArenaList()){
             Game game = new Game(a, plugin);

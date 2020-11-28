@@ -46,10 +46,14 @@ public class Game {
         }
         //Start coroutines
         foodCheck();
+        //Start generators
         teamGens();
         emeraldGens();
         diamondGens();
-        applyTeamStuff();
+        //Start upgrade checks
+        teamSharp();
+        teamProt();
+        teamHaste();
     }
 
     /* ------------ GETTERS ------------- */
@@ -150,26 +154,12 @@ public class Game {
         }.runTaskTimer(plugin, 0L, 1 * 20L);
     }
 
-    public void applyTeamStuff() {
+    public void teamProt() {
         new BukkitRunnable() {
             public void run() {
                 if (state == GameState.PLAYING) {
                     for (GameTeam team : teams) {
                         for (Player player : team.getPlayers()) {
-                            if (upgradesManager.getUpgrades(team).getManiacMiner() != 0) {
-                                player.addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, 2, upgradesManager.getUpgrades(team).getManiacMiner()));
-                            }
-                            if (upgradesManager.getUpgrades(team).hasSharp()) {
-                                for (ItemStack item : player.getInventory()) {
-                                    if (item != null) {
-                                        if (item.getType().toString().contains("SWORD") || item.getType().toString().contains("AXE")) {
-                                            if (!item.getEnchantments().containsKey(Enchantment.DAMAGE_ALL)) {
-                                                item.addEnchantment(Enchantment.DAMAGE_ALL, 1);
-                                            }
-                                        }
-                                    }
-                                }
-                            }
                             if (upgradesManager.getUpgrades(team).getProtLevel() != 0) {
                                 for (ItemStack item : player.getEquipment().getArmorContents()) {
                                     if (item == null) {
@@ -185,6 +175,43 @@ public class Game {
                                     }
                                 }
                             }
+                        }
+                    }
+                }
+            }
+        }.runTaskTimer(plugin, 0L, 1 * 20L);
+    }
+
+    public void teamSharp() {
+        new BukkitRunnable() {
+            public void run() {
+                if (state == GameState.PLAYING) {
+                    for (GameTeam team : teams) {
+                        for (Player player : team.getPlayers()) {
+                            if (upgradesManager.getUpgrades(team).hasSharp()) {
+                                for (ItemStack item : player.getInventory()) {
+                                    if (item != null) {
+                                        if (item.getType().toString().contains("SWORD") || item.getType().toString().contains("AXE")) {
+                                            if (!item.getEnchantments().containsKey(Enchantment.DAMAGE_ALL)) {
+                                                item.addEnchantment(Enchantment.DAMAGE_ALL, 1);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }.runTaskTimer(plugin, 0L, 1 * 20L);
+    }
+
+    public void teamHaste() {
+        new BukkitRunnable() {
+            public void run() {
+                if (state == GameState.PLAYING) {
+                    for (GameTeam team : teams) {
+                        for (Player player : team.getPlayers()) {
 
                             if (upgradesManager.getUpgrades(team).getManiacMiner() != 0) {
                                 player.addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, 16*20, upgradesManager.getUpgrades(team).getManiacMiner()));

@@ -26,30 +26,32 @@ public final class Bedwars extends JavaPlugin {
 
     private ArenaManager arenaManager;
     private static GameManager gameManager;
-    public static GameManager getGameManager(){
-        return gameManager;
-    }
     public static ShopCreator shopCreator;
     public static UpgradeCreator upgradeCreator;
+    String help  =  "\n&8*------------------------------------* \n" +
+            "&cBedwars Admin Help: &6v"+this.getDescription().getVersion()+"\n" +
+            "&e/bwa &6create <name> <minplayers> <maxplayers>\n" +
+            "&e/bwa &6debug\n" +
+            "&e/bwa &6setlobby <name>\n" +
+            "&e/bwa &6setmainlobby <name>\n" +
+            "&e/bwa &6addteam <name> <team name> <color>\n" +
+            "&e/bwa &6setspawn <name> <team>\n" +
+            "&e/bwa &6setteamgen <name> <team>\n" +
+            "&e/bwa &6setbed <name> <team>\n" +
+            "&e/bwa &6addgen <name> <diamond/emerald>\n" +
+            "&e/bwa &6additemshop\n" +
+            "&e/bwa &6addteamshop\n" +
+            "&e/bwa &6save <name>\n" +
+            "&8*------------------------------------* \n";
+
     public static UpgradeCreator getUpgradeCreator(){ return upgradeCreator; }
     public static ShopCreator getShopCreator(){
         return shopCreator;
     }
-    String help  =  "\n&8*------------------------------------* \n" +
-                    "&cBedwars Admin Help: &6v"+this.getDescription().getVersion()+"\n" +
-                    "&e/bwa &6create <name> <minplayers> <maxplayers>\n" +
-                    "&e/bwa &6debug\n" +
-                    "&e/bwa &6setlobby <name>\n" +
-                    "&e/bwa &6setmainlobby <name>\n" +
-                    "&e/bwa &6addteam <name> <team name> <color>\n" +
-                    "&e/bwa &6setspawn <name> <team>\n" +
-                    "&e/bwa &6setteamgen <name> <team>\n" +
-                    "&e/bwa &6setbed <name> <team>\n" +
-                    "&e/bwa &6addgen <name> <diamond/emerald>\n" +
-                    "&e/bwa &6additemshop\n" +
-                    "&e/bwa &6addteamshop\n" +
-                    "&e/bwa &6save <name>\n" +
-                    "&8*------------------------------------* \n";
+    public static GameManager getGameManager(){
+        return gameManager;
+    }
+
 
     public void onEnable() {
 

@@ -45,7 +45,22 @@ public class ShopListener implements Listener {
                     player.getInventory().removeItem(getMat(click));
                 }
                 player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME,1,1);
-                player.getInventory().addItem(new ItemStack(click.getType(), click.getAmount()));
+                if(!click.getType().toString().contains("BOOTS")) {
+                    player.getInventory().addItem(new ItemStack(click.getType(), click.getAmount()));
+                }else{
+                    if(click.getType().toString().contains("MAIL")){
+                        player.getEquipment().setLeggings(new ItemStack(Material.CHAINMAIL_LEGGINGS));
+                        player.getEquipment().setBoots(new ItemStack(Material.CHAINMAIL_BOOTS));
+                    }
+                    if(click.getType().toString().contains("IRON")){
+                        player.getEquipment().setLeggings(new ItemStack(Material.IRON_LEGGINGS));
+                        player.getEquipment().setBoots(new ItemStack(Material.IRON_BOOTS));
+                    }
+                    if(click.getType().toString().contains("DIAMOND")){
+                        player.getEquipment().setLeggings(new ItemStack(Material.DIAMOND_LEGGINGS));
+                        player.getEquipment().setBoots(new ItemStack(Material.DIAMOND_BOOTS));
+                    }
+                }
             }else {
                 Bedwars.sendMessage(player,"&cYou do not have enough of the required material!");
             }
