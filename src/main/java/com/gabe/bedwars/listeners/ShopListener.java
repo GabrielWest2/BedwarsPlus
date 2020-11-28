@@ -32,7 +32,6 @@ public class ShopListener implements Listener {
         }
 
         if(click.getItemMeta() == null){
-            Bukkit.getLogger().info(click.getType().toString());
             return;
         }
 
@@ -90,10 +89,8 @@ public class ShopListener implements Listener {
 
     public ShopPage getPage(String str){
         String s = ChatColor.stripColor(str);
-        Bukkit.getLogger().info(s);
         for(ShopPage p : ShopPage.values()){
             if(p.toString().equalsIgnoreCase(s.toUpperCase())){
-                Bukkit.getLogger().info(p.toString());
                 return p;
             }
         }

@@ -122,8 +122,6 @@ public class ArenaManager {
     private Team deserializeTeam(String str) throws InvalidConfigurationTeam {
         String[] split = str.split(",");
         if(split.length==5) {
-
-            Bukkit.getLogger().info(getColor(split[0])+" Color");
             Team team = new Team(split[1], getColor(split[0]));
 
             if(!split[2].equals("null")){

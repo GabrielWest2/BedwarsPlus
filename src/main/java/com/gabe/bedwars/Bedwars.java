@@ -2,12 +2,14 @@ package com.gabe.bedwars;
 
 import com.gabe.bedwars.arenas.Arena;
 import com.gabe.bedwars.listeners.ShopListener;
+import com.gabe.bedwars.listeners.UpgradeListener;
 import com.gabe.bedwars.managers.ArenaManager;
 import com.gabe.bedwars.arenas.Game;
 import com.gabe.bedwars.listeners.GameListener;
 import com.gabe.bedwars.shop.ShopCreator;
 import com.gabe.bedwars.tabcomplete.AdminTabComplete;
 import com.gabe.bedwars.team.Team;
+import com.gabe.bedwars.upgrade.UpgradeCreator;
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import org.bukkit.*;
@@ -27,6 +29,8 @@ public final class Bedwars extends JavaPlugin {
         return gameManager;
     }
     public static ShopCreator shopCreator;
+    public static UpgradeCreator upgradeCreator;
+    public static UpgradeCreator getUpgradeCreator(){ return upgradeCreator; }
     public static ShopCreator getShopCreator(){
         return shopCreator;
     }
@@ -42,6 +46,8 @@ public final class Bedwars extends JavaPlugin {
                     "&e/bwa &6setteamgen <name> <team>\n" +
                     "&e/bwa &6setbed <name> <team>\n" +
                     "&e/bwa &6addgen <name> <diamond/emerald>\n" +
+                    "&e/bwa &6additemshop\n" +
+                    "&e/bwa &6addteamshop\n" +
                     "&e/bwa &6save <name>\n" +
                     "&8*------------------------------------* \n";
 
@@ -52,8 +58,10 @@ public final class Bedwars extends JavaPlugin {
         arenaManager.deserialize();
         gameManager = new GameManager(this);
         shopCreator = new ShopCreator();
+        upgradeCreator = new UpgradeCreator();
         Bukkit.getPluginManager().registerEvents(new GameListener(this), this);
         Bukkit.getPluginManager().registerEvents(new ShopListener(), this);
+        Bukkit.getPluginManager().registerEvents(new UpgradeListener(), this);
 
 
     }
@@ -279,16 +287,37 @@ public final class Bedwars extends JavaPlugin {
                     else if(args[0].equalsIgnoreCase("additemshop")){
                         Villager villager = (Villager) player.getLocation().getWorld().spawnEntity(player.getLocation(), EntityType.VILLAGER);
                         villager.setAI(false);
-                        ArmorStand as = (ArmorStand) player.getWorld().spawn(player.getLocation().subtract(0,0.3,0), ArmorStand.class);
+                        villager.setCustomName("§i");
+                        villager.setCustomNameVisible(false);
+                        ArmorStand as = (ArmorStand) player.getWorld().spawn(player.getLocation().subtract(0,0.2,0), ArmorStand.class);
                         as.setVisible(false);
                         as.setCustomName(ChatColor.GOLD+""+ChatColor.BOLD+"RIGHT CLICK");
                         as.setCustomNameVisible(true);
                         as.setGravity(false);
                         as.setCollidable(false);
 
-                        ArmorStand as1 = (ArmorStand) player.getWorld().spawn(player.getLocation(), ArmorStand.class);
+                        ArmorStand as1 = (ArmorStand) player.getWorld().spawn(player.getLocation().add(0,0.1,0), ArmorStand.class);
                         as1.setVisible(false);
                         as1.setCustomName(ChatColor.AQUA+"Item Shop");
+                        as1.setCustomNameVisible(true);
+                        as1.setGravity(false);
+                        as1.setCollidable(false);
+                    }
+                    else if(args[0].equalsIgnoreCase("addteamshop")){
+                        Villager villager = (Villager) player.getLocation().getWorld().spawnEntity(player.getLocation(), EntityType.VILLAGER);
+                        villager.setAI(false);
+                        villager.setCustomName("§t");
+                        villager.setCustomNameVisible(false);
+                        ArmorStand as = (ArmorStand) player.getWorld().spawn(player.getLocation().subtract(0,0.2,0), ArmorStand.class);
+                        as.setVisible(false);
+                        as.setCustomName(ChatColor.GOLD+""+ChatColor.BOLD+"RIGHT CLICK");
+                        as.setCustomNameVisible(true);
+                        as.setGravity(false);
+                        as.setCollidable(false);
+
+                        ArmorStand as1 = (ArmorStand) player.getWorld().spawn(player.getLocation().add(0,0.1,0), ArmorStand.class);
+                        as1.setVisible(false);
+                        as1.setCustomName(ChatColor.AQUA+"Team Upgrades");
                         as1.setCustomNameVisible(true);
                         as1.setGravity(false);
                         as1.setCollidable(false);

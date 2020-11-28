@@ -21,6 +21,7 @@ import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -170,36 +171,27 @@ public class GameListener implements Listener {
     @EventHandler
     public void onPlayerInteractEntityEvent(PlayerInteractEntityEvent event) {
         Entity entity = event.getRightClicked();
+        Player player = event.getPlayer();
         if (!(entity instanceof NPC))
             return;
 
-        event.setCancelled(true);
-        Player player = event.getPlayer();
-        player.openInventory(Bedwars.getShopCreator().createShop(ShopPage.BLOCKS, player));
-        /*Inventory shopPage = Bukkit.createInventory(null, 27, ChatColor.DARK_GRAY+"Shop");
-
-        ItemStack p = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
-        ItemMeta pm = p.getItemMeta();
-        pm.setDisplayName(" ");
-        p.setItemMeta(pm);
-
-        ItemStack s= new ItemStack(Material.LIME_STAINED_GLASS_PANE);
-        ItemMeta sm = s.getItemMeta();
-        sm.setDisplayName(" ");
-        s.setItemMeta(pm);
-
-        for(int i = 0;i<9;i++){
-            shopPage.setItem(i, p);
+        if(entity.getCustomName().contains("i")) {
+            event.setCancelled(true);
+            player.openInventory(Bedwars.getShopCreator().createShop(ShopPage.BLOCKS, player));
         }
-        for(int i = 18;i<27;i++){
-            shopPage.setItem(i, p);
-        }
-        player.openInventory(shopPage);
 
-        shopPage.setItem(1, s);
-        shopPage.setItem(19, s);
-        shopPage.setItem(9, p);
-        shopPage.setItem(17, p);*/
+
+        if(gameManager.getGame(player) == null){
+            return;
+        }
+        if(gameManager.getGame(player).getTeam(player) == null){
+            return;
+        }
+
+        if(entity.getCustomName().contains("t")) {
+            event.setCancelled(true);
+            player.openInventory(Bedwars.getUpgradeCreator().createUpgradeShop(gameManager.getGame(player).getUpgradesManager().getUpgrades(gameManager.getGame(player).getTeam(player)), player));
+        }
     }
 
     @EventHandler
