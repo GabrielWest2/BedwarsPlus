@@ -11,7 +11,7 @@ import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
 
-public class ScoreboardFactory {
+public class ScoreboardFactoryUtils {
 
 
     public static Scoreboard makeBoard(Player player, GameState state, Game game){

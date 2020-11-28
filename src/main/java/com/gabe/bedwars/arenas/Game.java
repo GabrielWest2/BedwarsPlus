@@ -2,7 +2,7 @@ package com.gabe.bedwars.arenas;
 
 import com.gabe.bedwars.Bedwars;
 import com.gabe.bedwars.GameState;
-import com.gabe.bedwars.ScoreboardFactory;
+import com.gabe.bedwars.ScoreboardFactoryUtils;
 import com.gabe.bedwars.managers.GameBlockManager;
 import com.gabe.bedwars.managers.GameStatsManager;
 import com.gabe.bedwars.managers.TeamUpgradesManager;
@@ -395,7 +395,7 @@ public class Game {
 
     public void updateScoreboards() {
         for (Player player : players) {
-            player.setScoreboard(ScoreboardFactory.makeBoard(player, state, this));
+            player.setScoreboard(ScoreboardFactoryUtils.makeBoard(player, state, this));
         }
     }
 
