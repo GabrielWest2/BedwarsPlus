@@ -2,9 +2,9 @@
 Paper bedwars minigame plugin!  
 Supported version [1.16.4]
 ## Features
--Normal bedwars gameplay!
--Ingame item & team shops
--Waiting bossbar with custom message[]
+- Normal bedwars gameplay!
+- Ingame item & team shops
+- Waiting bossbar with custom message[]
 
 # Setup
 /bwa create [arena name] - Creates arena  
