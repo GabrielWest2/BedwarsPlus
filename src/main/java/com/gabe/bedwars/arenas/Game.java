@@ -378,6 +378,7 @@ public class Game {
             for (GameTeam team : teams) {
                 if (playersToAdd.size() != 0) {
                     team.addPlayer(playersToAdd.get(0));
+
                     playersToAdd.remove(0);
                 } else {
                     break;

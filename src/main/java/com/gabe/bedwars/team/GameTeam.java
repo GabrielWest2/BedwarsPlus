@@ -63,11 +63,12 @@ public class GameTeam {
 
     public void addPlayer(Player player){
         players.add(player);
-        alivePlayers.remove(player);
+        alivePlayers.add(player);
     }
 
     public void died(Player player){
         spec.add(player);
+        alivePlayers.remove(player);
     }
 
     public void removePlayer(Player player){
