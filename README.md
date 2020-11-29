@@ -5,9 +5,9 @@ Supported version [1.16.4]
 - Normal bedwars gameplay!
 - Ingame item & team shops
 - Arena resseting
->- Colored armor
->- Placeholder API suport[COMMING SOON]
->- Waiting bossbar with custom message[COMMING SOON]
+- Colored armor
+- Placeholder API suport[COMMING SOON]
+- Waiting bossbar with custom message[COMMING SOON]
 
 # Setup
 /bwa create [arena name] - Creates arena  
