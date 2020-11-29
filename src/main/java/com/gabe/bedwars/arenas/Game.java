@@ -5,10 +5,15 @@ import com.gabe.bedwars.GameState;
 import com.gabe.bedwars.ScoreboardFactoryUtils;
 import com.gabe.bedwars.managers.GameBlockManager;
 import com.gabe.bedwars.managers.GameStatsManager;
+import com.gabe.bedwars.managers.NameManager;
 import com.gabe.bedwars.managers.TeamUpgradesManager;
 import com.gabe.bedwars.team.GameTeam;
 import com.gabe.bedwars.team.Team;
 import org.bukkit.*;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarFlag;
+import org.bukkit.boss.BarStyle;
+import org.bukkit.boss.BossBar;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -25,6 +30,7 @@ public class Game {
     private final GameBlockManager blockManager;
     private final GameStatsManager statsManager;
     private final TeamUpgradesManager upgradesManager;
+    private final NameManager nameManager;
     private boolean hasPlayers = false;
     private final Arena arena;
     private final Bedwars plugin;
@@ -37,6 +43,7 @@ public class Game {
         blockManager = new GameBlockManager();
         statsManager = new GameStatsManager();
         upgradesManager = new TeamUpgradesManager();
+        nameManager = new NameManager();
         state = GameState.WAITING;
         this.arena = arena;
         this.plugin = plugin;
@@ -55,6 +62,8 @@ public class Game {
         teamSharp();
         teamProt();
         teamHaste();
+        //Boss bar
+        bossBar(Arrays.asList("&e&lPlaying &f&lBEDWARS &e&lon &a&lYOURSERVER.NET","&e&lPlaying &f&lBEDWARS &e&lon &b&lYOURSERVER.NET","&e&lPlaying &f&lBEDWARS &e&lon &6&lYOURSERVER.NET"), BarColor.YELLOW, 20);
     }
 
     /* ------------ GETTERS ------------- */
@@ -109,6 +118,30 @@ public class Game {
     }
 
     /* ---------- COROUTINES ----------- */
+
+    public void bossBar(List<String> titles, BarColor color, long speed) {
+        new BukkitRunnable() {
+            BossBar bossBar = Bukkit.createBossBar(titles.get(0), color, BarStyle.SOLID, BarFlag.CREATE_FOG);
+            int i = 1;
+            @Override
+            public void run() {
+
+                if(getState() == GameState.WAITING){
+                    for(Player player : players){
+                        bossBar.addPlayer(player);
+                        bossBar.setTitle(ChatColor.translateAlternateColorCodes('&', titles.get(i)));
+                        i++;
+                        if (i >= titles.size()){
+                            i = 0;
+                        }
+                        Bukkit.getLogger().info(titles.get(i)+" "+i);
+                    }
+                }else{
+                    bossBar.removeAll();
+                }
+            }
+        }.runTaskTimer(plugin, 0L,  speed);
+    }
 
     public void emeraldGens() {
         new BukkitRunnable() {
@@ -273,6 +306,7 @@ public class Game {
                 } else {
                     broadcast("&cCanceling game! Not enough players. (" + players.size() + "/" + arena.getMinPlayers() + ")");
                     timer = -1;
+                    updateScoreboards();
                     cancel();
                 }
 
@@ -309,6 +343,7 @@ public class Game {
         player.getEnderChest().setContents(new ItemStack[0]);
         if (getState() == GameState.WAITING) {
             if (players.size() < arena.getMaxPlayers()) {
+                nameManager.addPlayer(player);
                 players.add(player);
                 statsManager.addPlayer(player);
                 updateScoreboards();
@@ -345,6 +380,7 @@ public class Game {
         player.teleport(arena.getMainLobbyLocation());
         broadcast(player.getName() + " has left the game! &6(" + players.size() + "/" + arena.getMinPlayers() + ")");
         updateScoreboards();
+        nameManager.restoreName(player);
     }
 
     /* ------------ MISC ------------- */

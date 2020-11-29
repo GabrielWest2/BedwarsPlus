@@ -47,7 +47,7 @@ public class ScoreboardFactoryUtils {
             ver.setScore(4);
             Score space3 = objective.getScore("    "); //Get a fake offline player
             space3.setScore(3);
-            Score server = objective.getScore(ChatColor.YELLOW+"www.gbookpro.com"); //Get a fake offline player
+            Score server = objective.getScore(ChatColor.YELLOW+Bedwars.serverText); //Get a fake offline player
             server.setScore(2);
 
         }else{
@@ -57,7 +57,7 @@ public class ScoreboardFactoryUtils {
 
             objective.setDisplayName(ChatColor.translateAlternateColorCodes('&',"&e&lBEDWARS"));
 
-            Score server = objective.getScore(ChatColor.YELLOW+"www.gbookpro.com"); //Get a fake offline player
+            Score server = objective.getScore(ChatColor.YELLOW+Bedwars.serverText); //Get a fake offline player
             server.setScore(1);
 
             Score space = objective.getScore(""); //Get a fake offline player

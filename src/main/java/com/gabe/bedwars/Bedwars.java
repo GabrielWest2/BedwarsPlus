@@ -28,6 +28,7 @@ public final class Bedwars extends JavaPlugin {
     private static GameManager gameManager;
     public static ShopCreator shopCreator;
     public static UpgradeCreator upgradeCreator;
+    public static String serverText = "yourserver.net";
     private String help = "\n&8*------------------------------------* \n" +
             "&cBedwars Admin Help: &6v" + this.getDescription().getVersion() + "\n" +
             "&e/bwa &6create <name> <minplayers> <maxplayers>\n" +
