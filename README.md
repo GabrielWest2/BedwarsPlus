@@ -8,6 +8,8 @@ Supported version [1.16.4]
 - Colored armor
 - Placeholder API suport[COMMING SOON]
 - Waiting bossbar with custom message[COMMING SOON]
+- [x] this is a complete item
+- [ ] this is an incomplete item
 
 # Setup
 /bwa create [arena name] - Creates arena  
