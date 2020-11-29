@@ -1,4 +1,4 @@
-# Bedwars ![Crowdin](https://d322cqt584bo4o.cloudfront.net/mastodon/localized.svg)]
+# Bedwars ![Crowdin](https://d322cqt584bo4o.cloudfront.net/mastodon/localized.svg)
 Paper bedwars minigame plugin!  
 Supported version [1.16.4]
 ## Features
