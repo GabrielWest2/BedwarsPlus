@@ -43,6 +43,3 @@ bossbar:
 - '&e&lPlaying &f&lBEDWARS &e&lon &6&lYOURSERVER.NET'
 
 ```
-<script>
-  alert('hi');
-  </script>
