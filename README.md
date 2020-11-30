@@ -34,7 +34,7 @@ bossbar - A list of the bossbar messages to be displayed in the waiting lobby
 
 <h3>Deafault</h3>     
 
-```ruby
+```yaml
 require 'redcarpet'
 markdown = Redcarpet.new("Hello World!")
 puts markdown.to_html
