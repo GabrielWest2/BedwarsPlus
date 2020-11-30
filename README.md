@@ -28,14 +28,14 @@ Supported version [1.16.4]
 /bwa addteamshop - Add a team shop at your current location  
 
 # Config
-servername - The ip adress displayed at the bottom of the scoreboard  
-bossbardelay - The anount of ticks inbetween bossbar cycle(20 ticks per second)  
-bossbar - A list of the bossbar messages to be displayed in the waiting lobby
+servername - The ip adress displayed at the bottom of the scoreboard   
+bossbardelay - The anount of ticks inbetween bossbar cycle(20 ticks per second)    
+bossbar - A list of the bossbar messages to be displayed in the waiting lobby  
 
 <h3>Deafault</h3>     
 > servername: mc.server.net   
 > bossbardelay: 60   
 > bossbar:   
-> * '&e&lPlaying &f&lBEDWARS &e&lon &a&lYOURSERVER.NET'
-> * '&e&lPlaying &f&lBEDWARS &e&lon &b&lYOURSERVER.NET'
-> * '&e&lPlaying &f&lBEDWARS &e&lon &6&lYOURSERVER.NET'
+> * '&e&lPlaying &f&lBEDWARS &e&lon &a&lYOURSERVER.NET'  
+> * '&e&lPlaying &f&lBEDWARS &e&lon &b&lYOURSERVER.NET'  
+> * '&e&lPlaying &f&lBEDWARS &e&lon &6&lYOURSERVER.NET'  
