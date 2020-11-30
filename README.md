@@ -33,9 +33,12 @@ bossbardelay - The anount of ticks inbetween bossbar cycle(20 ticks per second)
 bossbar - A list of the bossbar messages to be displayed in the waiting lobby  
 
 <h3>Deafault</h3>     
-<servername: mc.server.net<br>
-bossbardelay: 60<br>
-bossbar:<br>
-- '&e&lPlaying &f&lBEDWARS &e&lon &a&lYOURSERVER.NET'  <br>
-- '&e&lPlaying &f&lBEDWARS &e&lon &b&lYOURSERVER.NET'  <br>
-- '&e&lPlaying &f&lBEDWARS &e&lon &6&lYOURSERVER.NET'  <br>
+```yml
+servername: mc.server.net
+bossbardelay: 60
+bossbar:
+- '&e&lPlaying &f&lBEDWARS &e&lon &a&lYOURSERVER.NET'
+- '&e&lPlaying &f&lBEDWARS &e&lon &b&lYOURSERVER.NET'
+- '&e&lPlaying &f&lBEDWARS &e&lon &6&lYOURSERVER.NET'
+
+```
