@@ -6,6 +6,7 @@ Supported version [1.16.4]
 - Ingame item & team shops
 - Arena break/place protection
 - Arena resseting
+- Countdown
 - Colored armor
 - Animated bossbar with custom message
 - Custom messages and prefix[COMMING SOON]
