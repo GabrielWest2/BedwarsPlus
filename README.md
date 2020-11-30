@@ -25,7 +25,7 @@ Supported version [1.16.4]
 <h3>Villagers</h3> 
 
 /bwa additemshop - Add a item shop at your current location  
-/bwa addteamshop - Add a team shop at your current location  
+/bwa addteamshop - Add a team upgrades shop at your current location  
 
 # Config
 servername - The ip adress displayed at the bottom of the scoreboard   
