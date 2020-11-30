@@ -7,7 +7,7 @@ Supported version [1.16.4]
 - Arena break/place protection
 - Arena resseting
 - Colored armor
-- Waiting bossbar with custom message
+- Animated bossbar with custom message
 - Custom messages and prefix[COMMING SOON]
 - Placeholder API suport[COMMING SOON]
 # Setup
