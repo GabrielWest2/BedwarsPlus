@@ -34,11 +34,8 @@ bossbar - A list of the bossbar messages to be displayed in the waiting lobby
 
 <h3>Deafault</h3>     
 
-# YAML
-object:
-  attributes:
-    - attr1
-    - attr2
-    - attr3
-  methods: [ getter, setter ]
+---
+title: "My Document"
+author: "Firstname McLastname"
+---
 
