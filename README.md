@@ -33,7 +33,7 @@ bossbardelay - The anount of ticks inbetween bossbar cycle(20 ticks per second)
 bossbar - A list of the bossbar messages to be displayed in the waiting lobby  
 
 <h3>Deafault</h3>     
-` ` ` yml
+` ` ``` yml
 version: "2"
 services:
 
