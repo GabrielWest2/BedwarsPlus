@@ -28,12 +28,12 @@ Supported version [1.16.4]
 /bwa addteamshop - Add a team shop at your current location  
 
 # Config
->servername: mc.server.net
->bossbardelay: 60
->bossbar:
->- '&e&lPlaying &f&lBEDWARS &e&lon &a&lYOURSERVER.NET'
->- '&e&lPlaying &f&lBEDWARS &e&lon &b&lYOURSERVER.NET'
->- '&e&lPlaying &f&lBEDWARS &e&lon &6&lYOURSERVER.NET'
+>servername: mc.server.net  
+>bossbardelay: 60  
+>bossbar:  
+>* '&e&lPlaying &f&lBEDWARS &e&lon &a&lYOURSERVER.NET'
+>* '&e&lPlaying &f&lBEDWARS &e&lon &b&lYOURSERVER.NET'
+>* '&e&lPlaying &f&lBEDWARS &e&lon &6&lYOURSERVER.NET'
 
 
 servername - The ip adress displayed at the bottom of the scoreboard
