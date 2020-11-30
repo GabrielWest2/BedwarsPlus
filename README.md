@@ -35,7 +35,11 @@ bossbar - A list of the bossbar messages to be displayed in the waiting lobby
 <h3>Deafault</h3>     
 
 ```yaml
-require 'redcarpet'
-markdown = Redcarpet.new("Hello World!")
-puts markdown.to_html
+servername: mc.server.net
+bossbardelay: 60
+bossbar:
+- '&e&lPlaying &f&lBEDWARS &e&lon &a&lYOURSERVER.NET'
+- '&e&lPlaying &f&lBEDWARS &e&lon &b&lYOURSERVER.NET'
+- '&e&lPlaying &f&lBEDWARS &e&lon &6&lYOURSERVER.NET'
+
 ```
