@@ -34,11 +34,18 @@ bossbar - A list of the bossbar messages to be displayed in the waiting lobby
 
 <h3>Deafault</h3>     
 ```yml
-servername: mc.server.net
-bossbardelay: 60
-bossbar:
-- '&e&lPlaying &f&lBEDWARS &e&lon &a&lYOURSERVER.NET'
-- '&e&lPlaying &f&lBEDWARS &e&lon &b&lYOURSERVER.NET'
-- '&e&lPlaying &f&lBEDWARS &e&lon &6&lYOURSERVER.NET'
+version: "2"
+services:
 
+  php:
+    volumes:
+      - your-app-files:/app:nocopy
+
+  nginx:
+    volumes:
+      - your-app-files:/app:nocopy
+
+volumes:
+  your-app-files:
+    external: true
 ```
