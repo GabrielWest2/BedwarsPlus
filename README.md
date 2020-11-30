@@ -26,3 +26,5 @@ Supported version [1.16.4]
 
 /bwa additemshop - Add a item shop at your current location  
 /bwa addteamshop - Add a team shop at your current location  
+
+# Config
