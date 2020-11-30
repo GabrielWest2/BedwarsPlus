@@ -28,3 +28,6 @@ Supported version [1.16.4]
 /bwa addteamshop - Add a team shop at your current location  
 
 # Config
+"servername: " - The ip adress displayed at the bottom of the scoreboard
+"bossbardelay: " - The anount of ticks in between bossbar cycle(20 ticks per second)
+"bossbar: " - A list of the bossbar messages
