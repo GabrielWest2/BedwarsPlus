@@ -20,6 +20,6 @@ Supported version [1.16.4]
 /bwa addteam [arena name] [team name] [color] - Creates a new team using one of <a href="https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/ChatColor.html">these</a> colors. <br>    
 /bwa setspawn [arena name] [team name] - Sets a team spawn<br>
 /bwa setteamgen [arena name] [team name] - Sets a teams generator location    <br>
-/bwa setbed [arena name] [team name] - Sets a teams bed location    <br>
+/bwa setbed [arena name] [team name] - Sets a teams bed location  
 <h3>Villagers</h3>   
 /bwa addgen [arena name] [diamond/emerald] - Add a diammond or emerald generator  
