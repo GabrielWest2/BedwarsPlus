@@ -23,4 +23,5 @@ Supported version [1.16.4]
 /bwa setbed [arena name] [team name] - Sets a teams bed location  
 <h3>Villagers</h3> 
 
-/bwa addgen [arena name] [diamond/emerald] - Add a diammond or emerald generator  
+/bwa additemshop - Add a item shop at your current location
+/bwa addteamshop - Add a team shop at your current location
