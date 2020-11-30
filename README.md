@@ -9,7 +9,7 @@ Supported version [1.16.4]
 - Countdown
 - Colored armor
 - Animated bossbar with custom message
-- Custom messages and prefix[COMMING SOON]
+- Custom messages and prefix
 - Placeholder API suport[COMMING SOON]
 # Setup
 /bwa create [arena name] - Creates arena  
