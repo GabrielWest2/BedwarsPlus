@@ -32,7 +32,7 @@ servername - The ip adress displayed at the bottom of the scoreboard
 bossbardelay - The amount of ticks inbetween bossbar cycle(20 ticks per second)    
 bossbar - A list of the bossbar messages to be displayed in the waiting lobby  
 
-<h3>Deafault</h3>     
+<h3>Default</h3>     
 
 ```yaml
 servername: mc.server.net
