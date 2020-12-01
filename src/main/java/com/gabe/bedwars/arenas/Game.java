@@ -17,6 +17,7 @@ import org.bukkit.boss.BossBar;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -63,7 +64,7 @@ public class Game {
         teamProt();
         teamHaste();
         //Boss bar
-        bossBar(Arrays.asList("&e&lPlaying &f&lBEDWARS &e&lon &a&lYOURSERVER.NET","&e&lPlaying &f&lBEDWARS &e&lon &b&lYOURSERVER.NET","&e&lPlaying &f&lBEDWARS &e&lon &6&lYOURSERVER.NET"), BarColor.YELLOW, 20);
+        bossBar(Bedwars.bossBar, BarColor.YELLOW);
     }
 
     /* ------------ GETTERS ------------- */
@@ -119,7 +120,7 @@ public class Game {
 
     /* ---------- COROUTINES ----------- */
 
-    public void bossBar(List<String> titles, BarColor color, long speed) {
+    public void bossBar(List<String> titles, BarColor color) {
         new BukkitRunnable() {
             BossBar bossBar = Bukkit.createBossBar(titles.get(0), color, BarStyle.SOLID, BarFlag.CREATE_FOG);
             int i = 1;
@@ -134,13 +135,13 @@ public class Game {
                         if (i >= titles.size()){
                             i = 0;
                         }
-                        Bukkit.getLogger().info(titles.get(i)+" "+i);
                     }
                 }else{
+                    bossBar.setVisible(false);
                     bossBar.removeAll();
                 }
             }
-        }.runTaskTimer(plugin, 0L,  speed);
+        }.runTaskTimer(plugin, 0L,  Bedwars.bossbarDelay);
     }
 
     public void emeraldGens() {
@@ -336,16 +337,22 @@ public class Game {
         team.setHasBed(false);
         statsManager.playerBrokeBed(player);
         broadcastWithoutPrefix("&f&lBED DESTRUCTION > " + team.getColor() + team.getName() + "'s &cbed was destroyed by " + player.getName() + "!");
+        for (Player p : team.getPlayers()){
+            p.sendTitle(ChatColor.translateAlternateColorCodes('&', "&cBED DESTROYED"), "", 1,3,1);
+            p.playSound(player.getLocation(), Sound.ENTITY_ENDER_DRAGON_DEATH, 1, 1);
+        }
         updateScoreboards();
     }
 
     public void addPlayer(Player player) {
-        player.getEnderChest().setContents(new ItemStack[0]);
         if (getState() == GameState.WAITING) {
             if (players.size() < arena.getMaxPlayers()) {
                 nameManager.addPlayer(player);
                 players.add(player);
                 statsManager.addPlayer(player);
+                player.getEnderChest().setContents(new ItemStack[0]);
+                player.getInventory().clear();
+                player.getInventory().setItem(9, getLeaveItem());
                 updateScoreboards();
 
                 if(arena.getLobbyLocation() != null) {
@@ -381,11 +388,21 @@ public class Game {
         broadcast(player.getName() + " has left the game! &6(" + players.size() + "/" + arena.getMinPlayers() + ")");
         updateScoreboards();
         nameManager.restoreName(player);
+        player.getInventory().clear();
+        player.setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
     }
 
     /* ------------ MISC ------------- */
+    public ItemStack getLeaveItem(){
+        ItemStack item = new ItemStack(Material.RED_BED);
+        ItemMeta im = item.getItemMeta();
+        im.setDisplayName(ChatColor.translateAlternateColorCodes('&',"&c&lReturn to Lobby &7(Right Click)"));
+        im.setLore(Arrays.asList(ChatColor.translateAlternateColorCodes('&',"&7Right-click to return to the lobby.")));
+        return item;
+    }
+
     public void broadcast(String msg) {
-        String message = "&8[&6BW&8] &8> &e" + msg;
+        String message = Bedwars.prefix + msg;
         for (Player p : players) {
             p.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
         }
@@ -419,6 +436,9 @@ public class Game {
                     break;
                 }
             }
+        }
+        for(Player player : players){
+            player.getInventory().clear();
         }
         for (GameTeam team : teams) {
             upgradesManager.addTeam(team);

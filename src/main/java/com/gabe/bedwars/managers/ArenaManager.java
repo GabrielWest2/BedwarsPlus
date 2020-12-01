@@ -153,6 +153,9 @@ public class ArenaManager {
     }
 
     private Location deserializeLoc(String str) throws InvalidConfigurationLocation {
+        if(str == null){
+            throw new InvalidConfigurationLocation("Location cant be null!");
+        }
         String[] split = str.split(";");
         if (split.length == 4) {
             Location location = new Location(Bukkit.getWorld(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2]), Integer.parseInt(split[3]));

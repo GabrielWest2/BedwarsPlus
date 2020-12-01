@@ -258,7 +258,7 @@ public class GameListener implements Listener {
     }
 
     @EventHandler
-    public void invclick(InventoryClickEvent event) {
+    public void onInventoryClick(InventoryClickEvent event) {
         if (event.getView().getTitle().contains("Shop")) {
             return;
         }
@@ -279,68 +279,34 @@ public class GameListener implements Listener {
     }
 
     @EventHandler
-    public void interact(PlayerInteractEvent e){
-        Action eventAction = e.getAction();
-        Player player = e.getPlayer();
+    public void playerInteractEvent(PlayerInteractEvent event){
+        Action eventAction = event.getAction();
+        Player player = event.getPlayer();
+        Game game = gameManager.getGame(player);
 
-        if (eventAction == Action.RIGHT_CLICK_AIR || eventAction == Action.RIGHT_CLICK_BLOCK){
-            if (player.getItemInHand().getType().equals(Material.FIRE_CHARGE)) {
-                player.launchProjectile(Fireball.class).setVelocity(player.getLocation().getDirection().multiply(0.5));
-                player.getInventory().remove(Material.FIRE_CHARGE);
-            }
-        }
-    }
-
-    @EventHandler
-    public void onEntityDamage(EntityDamageByEntityEvent event) {
-        if (event.getEntity() instanceof Player) {
-            Player b = (Player) event.getEntity();
-
-            if (b.getInventory().getHelmet() != null) {
-                ItemStack helmet = b.getInventory().getHelmet();
-
-                if (helmet.getType().getMaxDurability() > 0) {
-                    event.setCancelled(true);
+        if(game != null) {
+            if (eventAction == Action.RIGHT_CLICK_AIR || eventAction == Action.RIGHT_CLICK_BLOCK) {
+                if (player.getItemInHand().getType().equals(Material.FIRE_CHARGE)) {
+                    player.launchProjectile(Fireball.class).setVelocity(player.getLocation().getDirection().multiply(0.5));
                 }
-            }
-
-            if (b.getInventory().getChestplate() != null) {
-                ItemStack chestplate = b.getInventory().getChestplate();
-
-                if (chestplate.getType().getMaxDurability() > 0) {
-                    event.setCancelled(true);
-                }
-            }
-
-            if (b.getInventory().getLeggings() != null) {
-                ItemStack leggings = b.getInventory().getLeggings();
-
-                if (leggings.getType().getMaxDurability() > 0) {
-                    event.setCancelled(true);
-                }
-            }
-
-            if (b.getInventory().getBoots() != null) {
-                ItemStack boots = b.getInventory().getBoots();
-
-                if (boots.getType().getMaxDurability() > 0) {
-                    event.setCancelled(true);
+                if(game.getState() == GameState.WAITING){
+                    if (player.getItemInHand().getType().equals(Material.RED_BED)) {
+                        event.setCancelled(true);
+                        game.removePlayer(player);
+                    }
                 }
             }
         }
     }
 
-
-
     @EventHandler
-    public void drinkPot(PlayerItemConsumeEvent event){
-        Bukkit.getLogger().info(event.getItem().getType().toString());
-        if(event.getItem().getType().toString().contains("POTION")){
-            Bukkit.getLogger().info("drankpot");
-            Player player = event.getPlayer();
-            event.getItem().setType(Material.AIR)
-            ;
-            player.updateInventory();
+    public void onPlayerDropItemEvent(PlayerDropItemEvent event){
+        Player player = event.getPlayer();
+        Game game = gameManager.getGame(player);
+        if(game != null){
+            if(game.getState() == GameState.WAITING){
+                event.setCancelled(true);
+            }
         }
     }
 }

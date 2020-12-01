@@ -16,19 +16,28 @@ import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
+import java.util.Arrays;
+import java.util.List;
+
 public final class Bedwars extends JavaPlugin {
 
     private ArenaManager arenaManager;
+    private YamlConfiguration config;
     private static GameManager gameManager;
     public static ShopCreator shopCreator;
     public static UpgradeCreator upgradeCreator;
     public static String serverText = "yourserver.net";
+    public static String prefix = "&8[&6BW&8] &8> &e";
+    public static List<String> bossBar = Arrays.asList("&e&lPlaying &f&lBEDWARS &e&lon &a&lYOURSERVER.NET","&e&lPlaying &f&lBEDWARS &e&lon &b&lYOURSERVER.NET","&e&lPlaying &f&lBEDWARS &e&lon &6&lYOURSERVER.NET");
+    public static long bossbarDelay = 20;
     private String help = "\n&8*------------------------------------* \n" +
             "&cBedwars Admin Help: &6v" + this.getDescription().getVersion() + "\n" +
             "&e/bwa &6create <name> <minplayers> <maxplayers>\n" +
@@ -59,7 +68,7 @@ public final class Bedwars extends JavaPlugin {
 
 
     public void onEnable() {
-
+        saveConfig();
         getCommand("bwa").setTabCompleter(new AdminTabComplete());
         arenaManager = new ArenaManager(this);
         arenaManager.deserialize();
@@ -71,6 +80,46 @@ public final class Bedwars extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new UpgradeListener(), this);
 
 
+    }
+
+
+    public void saveConfig() {
+        File file = new File(getDataFolder(), "config.yml");
+
+        if (!file.exists()) {
+            try {
+
+                file.createNewFile();
+
+
+                config = YamlConfiguration.loadConfiguration(file);
+                config.options().copyDefaults(true);
+
+
+                config.set("servername", "mc.server.net");
+                config.set("prefix", "&8[&6BW&8] &8> &e");
+                config.set("bossbardelay", 60);
+                config.set("bossbar", Arrays.asList("&e&lPlaying &f&lBEDWARS &e&lon &a&lYOURSERVER.NET","&e&lPlaying &f&lBEDWARS &e&lon &b&lYOURSERVER.NET","&e&lPlaying &f&lBEDWARS &e&lon &6&lYOURSERVER.NET"));
+
+                try {
+                    config.save(file);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        } else {
+            config = YamlConfiguration.loadConfiguration(file);
+            loadValues();
+        }
+    }
+
+    private void loadValues(){
+        serverText = config.getString("servername");
+        bossbarDelay = config.getInt("bossbardelay");
+        bossBar = config.getStringList("bossbar");
+        prefix = config.getString("prefix");
     }
 
     public void onDisable() {
@@ -361,13 +410,13 @@ public final class Bedwars extends JavaPlugin {
     }
 
     public static void sendMessage(Player player, String msg) {
-        String message = "&8[&6BW&8] &8> &e" + msg;
+        String message = prefix + msg;
         player.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
     }
 
     public static void sendMessage(Player player, boolean usePrefix, String msg) {
         if (usePrefix) {
-            String message = "&8[&6BW&8] &8> &e" + msg;
+            String message = prefix + msg;
             player.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
         } else {
             player.sendMessage(ChatColor.translateAlternateColorCodes('&', msg));

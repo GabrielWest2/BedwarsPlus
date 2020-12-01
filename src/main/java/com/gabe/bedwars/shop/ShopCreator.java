@@ -79,17 +79,10 @@ public class ShopCreator {
         inv.setItem(17, r);
 
         if(inv.getItem(15).getType() == Material.LIME_STAINED_GLASS_PANE){
-            ItemStack item = new ItemStack(Material.POTION);
-            PotionMeta potm = (PotionMeta) item.getItemMeta();
-            potm.addCustomEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 1000*30, 1), true);
-            potm.setDisplayName((player.getInventory().containsAtLeast(new ItemStack(Material.EMERALD), 2) ? ChatColor.GREEN : ChatColor.RED) + "Invisibility Potion");
-            List<String> lore = new ArrayList<>();
-            lore.add(ChatColor.GRAY+"Cost: "+ChatColor.GREEN+"2 Emeralds");
-            lore.add(" ");
-            lore.add((player.getInventory().containsAtLeast(new ItemStack(Material.EMERALD), 2) ? ChatColor.YELLOW + "Click to buy." : ChatColor.RED+"You don't have enough emeralds!"));
-            potm.setLore(lore);
-            item.setItemMeta(potm);
-            inv.addItem(item);
+
+            inv.addItem(getInvis(player));
+            inv.addItem(getJump(player));
+            inv.addItem(getSpeed(player));
         }
 
         return inv;
@@ -156,5 +149,46 @@ public class ShopCreator {
             i = ChatColor.GREEN + "Emerald";
         }
         return i;
+    }
+
+    private ItemStack getInvis(Player player){
+        ItemStack item = new ItemStack(Material.POTION);
+        PotionMeta potm = (PotionMeta) item.getItemMeta();
+        potm.addCustomEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 20*40, 1), true);
+        potm.setDisplayName((player.getInventory().containsAtLeast(new ItemStack(Material.EMERALD), 2) ? ChatColor.GREEN : ChatColor.RED) + "Invisibility Potion");
+        List<String> lore = new ArrayList<>();
+        lore.add(ChatColor.GRAY+"Cost: "+ChatColor.GREEN+"2 Emeralds");
+        lore.add(" ");
+        lore.add((player.getInventory().containsAtLeast(new ItemStack(Material.EMERALD), 2) ? ChatColor.YELLOW + "Click to buy." : ChatColor.RED+"You don't have enough emeralds!"));
+        potm.setLore(lore);
+        item.setItemMeta(potm);
+        return item;
+    }
+    private ItemStack getJump(Player player){
+        ItemStack item = new ItemStack(Material.POTION);
+        PotionMeta potm = (PotionMeta) item.getItemMeta();
+        potm.addCustomEffect(new PotionEffect(PotionEffectType.JUMP, 20*60, 1), true);
+        potm.setDisplayName((player.getInventory().containsAtLeast(new ItemStack(Material.EMERALD), 1) ? ChatColor.GREEN : ChatColor.RED) + "Jump Boost Potion");
+        List<String> lore = new ArrayList<>();
+        lore.add(ChatColor.GRAY+"Cost: "+ChatColor.GREEN+"1 Emeralds");
+        lore.add(" ");
+        lore.add((player.getInventory().containsAtLeast(new ItemStack(Material.EMERALD), 1) ? ChatColor.YELLOW + "Click to buy." : ChatColor.RED+"You don't have enough emeralds!"));
+        potm.setLore(lore);
+        item.setItemMeta(potm);
+        return item;
+    }
+
+    private ItemStack getSpeed(Player player){
+        ItemStack item = new ItemStack(Material.POTION);
+        PotionMeta potm = (PotionMeta) item.getItemMeta();
+        potm.addCustomEffect(new PotionEffect(PotionEffectType.SPEED, 20*60, 1), true);
+        potm.setDisplayName((player.getInventory().containsAtLeast(new ItemStack(Material.EMERALD), 1) ? ChatColor.GREEN : ChatColor.RED) + "Speed Boost Potion");
+        List<String> lore = new ArrayList<>();
+        lore.add(ChatColor.GRAY+"Cost: "+ChatColor.GREEN+"1 Emeralds");
+        lore.add(" ");
+        lore.add((player.getInventory().containsAtLeast(new ItemStack(Material.EMERALD), 1) ? ChatColor.YELLOW + "Click to buy." : ChatColor.RED+"You don't have enough emeralds!"));
+        potm.setLore(lore);
+        item.setItemMeta(potm);
+        return item;
     }
 }

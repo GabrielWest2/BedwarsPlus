@@ -10,6 +10,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class ShopListener implements Listener {
@@ -39,10 +45,7 @@ public class ShopListener implements Listener {
             return;
         }
 
-        if(click.getItemMeta().getDisplayName().contains("Invisibility")){
-            player.getInventory().addItem(click);
-            return;
-        }
+
 
         if(isItem(click)){
             if(player.getInventory().containsAtLeast(getMat(click), getCost(click))) {
@@ -51,7 +54,20 @@ public class ShopListener implements Listener {
                 }
                 player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME,1,1);
                 if(!click.getType().toString().contains("BOOTS")) {
-                    player.getInventory().addItem(new ItemStack(click.getType(), click.getAmount()));
+                    if(click.getItemMeta().getDisplayName().contains("Invisibility")){
+                        player.getInventory().addItem(getInvis());
+                    }else {
+                        if(click.getItemMeta().getDisplayName().contains("Jump Boost")){
+                            player.getInventory().addItem(getJump());
+                        }else {
+                            if(click.getItemMeta().getDisplayName().contains("Speed Boost")){
+                                player.getInventory().addItem(getSpeed());
+                            }else {
+                                player.getInventory().addItem(new ItemStack(click.getType(), click.getAmount()));
+                            }
+                        }
+                    }
+
                 }else{
                     if(click.getType().toString().contains("MAIL")){
                         player.getEquipment().setLeggings(new ItemStack(Material.CHAINMAIL_LEGGINGS));
@@ -112,5 +128,35 @@ public class ShopListener implements Listener {
             }
         }
         return null;
+    }
+
+    private ItemStack getInvis(){
+        ItemStack item = new ItemStack(Material.POTION);
+        PotionMeta potm = (PotionMeta) item.getItemMeta();
+        potm.addCustomEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 20*40, 1), true);
+        potm.setDisplayName(ChatColor.GREEN + "Invisibility Potion");
+        item.setItemMeta(potm);
+
+        return item;
+    }
+
+    private ItemStack getJump(){
+        ItemStack item = new ItemStack(Material.POTION);
+        PotionMeta potm = (PotionMeta) item.getItemMeta();
+        potm.addCustomEffect(new PotionEffect(PotionEffectType.JUMP, 20*60, 1), true);
+        potm.setDisplayName(ChatColor.GREEN + "Jump Boost Potion");
+        item.setItemMeta(potm);
+
+        return item;
+    }
+
+    private ItemStack getSpeed(){
+        ItemStack item = new ItemStack(Material.POTION);
+        PotionMeta potm = (PotionMeta) item.getItemMeta();
+        potm.addCustomEffect(new PotionEffect(PotionEffectType.SPEED, 20*60, 1), true);
+        potm.setDisplayName(ChatColor.GREEN + "Speed Boost Potion");
+        item.setItemMeta(potm);
+
+        return item;
     }
 }

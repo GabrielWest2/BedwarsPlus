@@ -1,4 +1,4 @@
-name: Bedwars
+name: BedwarsPlus
 version: ${project.version}
 softdepend: [Multiverse-Core, My_Worlds]
 main: com.gabe.bedwars.Bedwars
