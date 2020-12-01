@@ -398,6 +398,7 @@ public class Game {
         ItemMeta im = item.getItemMeta();
         im.setDisplayName(ChatColor.translateAlternateColorCodes('&',"&c&lReturn to Lobby &7(Right Click)"));
         im.setLore(Arrays.asList(ChatColor.translateAlternateColorCodes('&',"&7Right-click to return to the lobby.")));
+        item.setItemMeta(im);
         return item;
     }
 
