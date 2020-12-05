@@ -3,7 +3,8 @@ Paper bedwars minigame plugin!
 Supported version [1.16.4]
 ## Features
 - Normal bedwars gameplay!
-- Ingame item & team shops
+- Ingame item shop
+- Team upgrades shop
 - Arena break/place protection
 - Arena resseting
 - Countdown
