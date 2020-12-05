@@ -1,7 +1,7 @@
 package com.gabe.bedwars.listeners;
 
 import com.gabe.bedwars.Bedwars;
-import com.gabe.bedwars.GameManager;
+import com.gabe.bedwars.managers.GameManager;
 import com.gabe.bedwars.GameState;
 import com.gabe.bedwars.arenas.Game;
 import com.gabe.bedwars.shop.ShopPage;
@@ -56,14 +56,12 @@ public class GameListener implements Listener {
         return true;
     }
 
-
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
         Game game = gameManager.getGame(player);
         if (game == null) return;
         game.removePlayer(player);
-        Bukkit.getLogger().info("player left");
     }
 
     @EventHandler
@@ -79,11 +77,9 @@ public class GameListener implements Listener {
             if (event.getBlock().getType().name().contains("BED")) {
                 event.setCancelled(true);
                 Location location = event.getBlock().getLocation();
-                Bukkit.getLogger().info(player.getName() + " broke bed");
                 for (GameTeam team : game.getTeams()) {
                     if (team.getBed() != null) {
                         if (isClose(team.getBed(), location)) {
-                            Bukkit.getLogger().info(team.getName() + " got broken bed");
                             if (!team.getPlayers().contains(player)) {
                                 if (!team.hasBed()) {
                                     Bedwars.sendMessage(player, "&cThis bed has already been destroyed!");
@@ -220,12 +216,14 @@ public class GameListener implements Listener {
                     Player attacker = player.getKiller();
                     game.playerDied(event.getEntity(), "was murdered by " + game.getTeam(attacker).getColor() + attacker.getName());
                     for (ItemStack i : player.getInventory()) {
-                        if (i.getType() == Material.IRON_INGOT || i.getType() == Material.GOLD_INGOT || i.getType() == Material.EMERALD || i.getType() == Material.DIAMOND) {
-                            player.getKiller().getInventory().addItem(i);
-                            player.getInventory().remove(i);
+                        if(i !=null) {
+                            if (i.getType() == Material.IRON_INGOT || i.getType() == Material.GOLD_INGOT || i.getType() == Material.EMERALD || i.getType() == Material.DIAMOND) {
+                                player.getKiller().getInventory().addItem(i);
+                                player.getInventory().remove(i);
 
-                        } else {
-                            player.getInventory().remove(i);
+                            } else {
+                                player.getInventory().remove(i);
+                            }
                         }
                     }
                     Bedwars.sendMessage(attacker, "&aYou killed " + event.getEntity().getName() + "!");
@@ -243,8 +241,9 @@ public class GameListener implements Listener {
             } else {
                 event.setCancelled(true);
             }
-
+            game.updateScoreboards();
         }
+        game.updateScoreboards();
     }
 
     @EventHandler
@@ -300,6 +299,17 @@ public class GameListener implements Listener {
     }
 
     @EventHandler
+    public void onMoveItem(InventoryClickEvent  event){
+        Player player = (Player) event.getWhoClicked();
+        Game game = gameManager.getGame(player);
+        if(game != null){
+            if(game.getState() == GameState.WAITING){
+                event.setCancelled(true);
+            }
+        }
+    }
+
+    @EventHandler
     public void onPlayerDropItemEvent(PlayerDropItemEvent event){
         Player player = event.getPlayer();
         Game game = gameManager.getGame(player);
@@ -307,6 +317,15 @@ public class GameListener implements Listener {
             if(game.getState() == GameState.WAITING){
                 event.setCancelled(true);
             }
+        }
+    }
+
+    @EventHandler
+    public void onArmorStandEdit(PlayerArmorStandManipulateEvent event){
+        Player player = event.getPlayer();
+        Game game = gameManager.getGame(player);
+        if(game != null){
+            event.setCancelled(true);
         }
     }
 }

@@ -1,7 +1,6 @@
 package com.gabe.bedwars.listeners;
 
 import com.gabe.bedwars.Bedwars;
-import com.gabe.bedwars.GameManager;
 import com.gabe.bedwars.upgrade.TeamUpgrades;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -75,6 +74,17 @@ public class UpgradeListener implements Listener {
                 if(player.getInventory().contains(Material.DIAMOND, getPriceToUpgradeGen(upgrades.getGenLevel()))) {
                     player.getInventory().removeItem(new ItemStack(Material.DIAMOND, getPriceToUpgradeGen(upgrades.getGenLevel())));
                     upgrades.upgradeGen();
+                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 1);
+                    player.openInventory(Bedwars.getUpgradeCreator().createUpgradeShop(upgrades, player));
+                }
+            }
+        }
+
+        if(click.getItemMeta().getDisplayName().contains("Health Pool")){
+            if (!upgrades.hasHeal()) {
+                if(player.getInventory().contains(Material.DIAMOND, 3)) {
+                    player.getInventory().removeItem(new ItemStack(Material.DIAMOND, 3));
+                    upgrades.buyHeal();
                     player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 1);
                     player.openInventory(Bedwars.getUpgradeCreator().createUpgradeShop(upgrades, player));
                 }

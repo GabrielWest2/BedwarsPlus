@@ -6,7 +6,7 @@
 
     <groupId>com.gabe</groupId>
     <artifactId>bedwars</artifactId>
-    <version>1.2</version>
+    <version>2.7</version>
     <packaging>jar</packaging>
 
     <name>Bedwars</name>

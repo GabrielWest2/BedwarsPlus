@@ -15,19 +15,24 @@ import org.bukkit.boss.BarFlag;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
 
 
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Game {
+    private Set<ArmorStand> dlables;
+    private Set<ArmorStand> diamondArmorStands;
+    private Set<ArmorStand> elables;
+    private Set<ArmorStand> emeraldArmorStands;
     private final GameBlockManager blockManager;
     private final GameStatsManager statsManager;
     private final TeamUpgradesManager upgradesManager;
@@ -39,6 +44,8 @@ public class Game {
     private Set<Player> players;
     private Set<GameTeam> teams;
     private GameState state;
+    private boolean spawnDiamond = false;
+    private boolean spawnEmerald = false;
 
     public Game(Arena arena, Bedwars plugin) {
         blockManager = new GameBlockManager();
@@ -50,11 +57,16 @@ public class Game {
         this.plugin = plugin;
         this.players = new HashSet<>();
         this.teams = new HashSet<>();
+        this.dlables = new HashSet<>();
+        this.elables = new HashSet<>();
+        this.diamondArmorStands = new HashSet<>();
+        this.emeraldArmorStands = new HashSet<>();
         for (Team t : arena.getTeams()) {
             teams.add(new GameTeam(t.getName(), t.getColor(), t.getSpawn(), t.getGenerator(), t.getBed()));
         }
         //Start coroutines
         foodCheck();
+        endCheck();
         //Start generators
         teamGens();
         emeraldGens();
@@ -63,8 +75,13 @@ public class Game {
         teamSharp();
         teamProt();
         teamHaste();
+        teamHeal();
         //Boss bar
         bossBar(Bedwars.bossBar, BarColor.YELLOW);
+        //Generators
+        spinArmorStands();
+        diamondArmorStands();
+        emeraldArmorStands();
     }
 
     /* ------------ GETTERS ------------- */
@@ -124,48 +141,157 @@ public class Game {
         new BukkitRunnable() {
             BossBar bossBar = Bukkit.createBossBar(titles.get(0), color, BarStyle.SOLID, BarFlag.CREATE_FOG);
             int i = 1;
+
             @Override
             public void run() {
 
-                if(getState() == GameState.WAITING){
-                    for(Player player : players){
+                if (getState() == GameState.WAITING) {
+                    for (Player player : players) {
                         bossBar.addPlayer(player);
                         bossBar.setTitle(ChatColor.translateAlternateColorCodes('&', titles.get(i)));
                         i++;
-                        if (i >= titles.size()){
+                        if (i >= titles.size()) {
                             i = 0;
                         }
                     }
-                }else{
+                } else {
                     bossBar.setVisible(false);
                     bossBar.removeAll();
                 }
             }
-        }.runTaskTimer(plugin, 0L,  Bedwars.bossbarDelay);
+        }.runTaskTimer(plugin, 0L, Bedwars.bossbarDelay);
+    }
+
+    public void endCheck() {
+        new BukkitRunnable() {
+            int teamCount = 0;
+
+            @Override
+            public void run() {
+                teamCount = 0;
+                for(GameTeam team : teams){
+                    if(team.hasBed()){
+                        teamCount++;
+                    }else{
+                        if(team.getAlivePlayers().size()>0){
+                            teamCount++;
+                        }
+                    }
+                }
+                Bukkit.getLogger().info(teamCount+"");
+                if(teamCount<2){
+                    for(GameTeam team : teams){
+                        if(team.hasBed() || team.getAlivePlayers().size()>0){
+                            endGame(team);
+                            cancel();
+                            return;
+                        }
+                    }
+                }
+            }
+        }.runTaskTimer(plugin, 0L, 20L);
     }
 
     public void emeraldGens() {
         new BukkitRunnable() {
             public void run() {
-                if (state == GameState.PLAYING) {
-                    for (Location loc : arena.getEmeraldGens()) {
-                        loc.getWorld().dropItem(loc.clone().add(0, 0.4, 0), new ItemStack(Material.EMERALD, 1));
+                if (spawnEmerald) {
+                    if (state == GameState.PLAYING) {
+                        for (Location loc : arena.getEmeraldGens()) {
+                            loc.getWorld().dropItem(loc.clone().add(0, 0.4, 0), new ItemStack(Material.EMERALD, 1));
+                        }
                     }
+                    spawnEmerald = false;
                 }
             }
-        }.runTaskTimer(plugin, 0L, 60 * 20L);
+        }.runTaskTimer(plugin, 0L, 20L);
     }
 
     public void diamondGens() {
         new BukkitRunnable() {
             public void run() {
-                if (state == GameState.PLAYING) {
-                    for (Location loc : arena.getDiamondGens()) {
-                        loc.getWorld().dropItem(loc.clone().add(0, 0.4, 0), new ItemStack(Material.DIAMOND, 1));
+                if (spawnDiamond) {
+                    if (state == GameState.PLAYING) {
+                        for (Location loc : arena.getDiamondGens()) {
+                            loc.getWorld().dropItem(loc.clone().add(0, 0.4, 0), new ItemStack(Material.DIAMOND, 1)).setVelocity(new Vector(0, 0.1, 0));
+                        }
+                        spawnDiamond = false;
                     }
                 }
             }
-        }.runTaskTimer(plugin, 0L, 20 * 20L);
+        }.runTaskTimer(plugin, 0L, 20L);
+    }
+
+    public void diamondArmorStands() {
+        for (Location loc : arena.getDiamondGens()) {
+            loc.clone().add(0.5, 0.5, 0.5);
+            ArmorStand as = (ArmorStand) loc.getWorld().spawnEntity(loc, EntityType.ARMOR_STAND);
+            as.setGravity(false);
+            as.setVisible(false);
+            as.setCustomName(ChatColor.YELLOW + "Spawns in " + ChatColor.RED + 20 + ChatColor.YELLOW + " seconds");
+            as.setCustomNameVisible(true);
+            diamondArmorStands.add(as);
+
+            ArmorStand as1 = (ArmorStand) loc.getWorld().spawnEntity(loc.clone().add(0, 0.25, 0), EntityType.ARMOR_STAND);
+            as1.setGravity(false);
+            as1.setVisible(false);
+            as1.setCustomName(ChatColor.AQUA + "" + ChatColor.BOLD + "Diamond");
+            as1.setCustomNameVisible(true);
+        }
+
+
+        new BukkitRunnable() {
+            int diamondTimer = 20;
+
+            public void run() {
+                if (state == GameState.PLAYING) {
+                    if (diamondTimer == 0) {
+                        diamondTimer = 20;
+                        spawnDiamond = true;
+                    }
+                    for (ArmorStand as : diamondArmorStands) {
+                        as.setCustomName(ChatColor.YELLOW + "Spawns in " + ChatColor.RED + diamondTimer + ChatColor.YELLOW + " seconds");
+                    }
+                    diamondTimer--;
+                }
+            }
+        }.runTaskTimer(plugin, 0, 20);
+    }
+
+    public void emeraldArmorStands() {
+        for (Location loc : arena.getEmeraldGens()) {
+            loc.clone().add(0.5, 0.5, 0.5);
+            ArmorStand as = (ArmorStand) loc.getWorld().spawnEntity(loc, EntityType.ARMOR_STAND);
+            as.setGravity(false);
+            as.setVisible(false);
+            as.setCustomName(ChatColor.YELLOW + "Spawns in " + ChatColor.RED + 60 + ChatColor.YELLOW + " seconds");
+            as.setCustomNameVisible(true);
+            emeraldArmorStands.add(as);
+
+            ArmorStand as1 = (ArmorStand) loc.getWorld().spawnEntity(loc.clone().add(0, 0.25, 0), EntityType.ARMOR_STAND);
+            as1.setGravity(false);
+            as1.setVisible(false);
+            as1.setCustomName(ChatColor.GREEN + "" + ChatColor.BOLD + "Emerald");
+            as1.setCustomNameVisible(true);
+        }
+
+
+        new BukkitRunnable() {
+            int emeraldTimer = 60;
+
+            public void run() {
+                if (state == GameState.PLAYING) {
+                    if (emeraldTimer == 0) {
+                        emeraldTimer = 60;
+                        spawnEmerald = true;
+                    }
+                    for (ArmorStand as : emeraldArmorStands) {
+                        as.setCustomName(ChatColor.YELLOW + "Spawns in " + ChatColor.RED + emeraldTimer + ChatColor.YELLOW + " seconds");
+                    }
+                    emeraldTimer--;
+                }
+            }
+        }.runTaskTimer(plugin, 0, 20);
     }
 
     public void teamGens() {
@@ -173,7 +299,7 @@ public class Game {
             public void run() {
                 if (state == GameState.PLAYING) {
                     for (GameTeam team : teams) {
-                        team.getGenerator().getWorld().dropItem(team.getGenerator().clone().add(0, 0.4, 0), new ItemStack(Material.IRON_INGOT, 1 + upgradesManager.getUpgrades(team).getExtaIronAmount()));
+                        team.getGenerator().getWorld().dropItem(team.getGenerator().clone().add(0, 0.4, 0), new ItemStack(Material.IRON_INGOT, 1 + upgradesManager.getUpgrades(team).getExtaIronAmount())).setVelocity(new Vector(0, 0.1, 0));
                         double rand = ThreadLocalRandom.current().nextDouble();
                         if (rand < upgradesManager.getUpgrades(team).getGoldPercent()) {
                             team.getGenerator().getWorld().dropItem(team.getGenerator().clone().add(0, 0.4, 0), new ItemStack(Material.GOLD_INGOT, 1));
@@ -248,13 +374,33 @@ public class Game {
                         for (Player player : team.getPlayers()) {
 
                             if (upgradesManager.getUpgrades(team).getManiacMiner() != 0) {
-                                player.addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, 16*20, upgradesManager.getUpgrades(team).getManiacMiner()));
+                                player.addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, 16 * 20, upgradesManager.getUpgrades(team).getManiacMiner()));
                             }
                         }
                     }
                 }
             }
         }.runTaskTimer(plugin, 0L, 1 * 20L);
+    }
+
+    public void teamHeal() {
+        new BukkitRunnable() {
+            public void run() {
+                if (state == GameState.PLAYING) {
+                    for (GameTeam team : teams) {
+                        for (Player player : team.getPlayers()) {
+                            if (upgradesManager.getUpgrades(team).hasHeal()) {
+                                if(isClose(player.getLocation(), team.getBed(), 10))
+                                if(player.getHealth() <= 19) {
+                                    player.setHealth(player.getHealth() + 1);
+                                    player.setSaturation(20);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }.runTaskTimer(plugin, 0L, 5 * 20L);
     }
 
     public void foodCheck() {
@@ -264,6 +410,25 @@ public class Game {
                     player.setFoodLevel(20);
                 }
 
+                //Use cancel(); if you want to close this repeating task.
+            }
+        }.runTaskTimer(plugin, 0L, 20L);
+    }
+
+    public void deathCountDown(Player player, GameTeam team) {
+
+        new BukkitRunnable() {
+            int count = 5;
+
+            public void run() {
+                if (count == 0) {
+                    player.setGameMode(GameMode.SURVIVAL);
+                    player.teleport(team.getSpawn());
+                    cancel();
+                } else {
+                    player.sendTitle(ChatColor.RED + "You Died!", ChatColor.YELLOW + "You will respawn in " + ChatColor.RED + count + ChatColor.YELLOW + " seconds.", 1, 20, 1);
+                    count -= 1;
+                }
                 //Use cancel(); if you want to close this repeating task.
             }
         }.runTaskTimer(plugin, 0L, 20L);
@@ -316,6 +481,44 @@ public class Game {
         }.runTaskTimer(plugin, 0L, 20L);
     }
 
+    public void spinArmorStands() {
+        for (Location loc : arena.getDiamondGens()) {
+            loc.add(0.5, 0.5, 0.5);
+            ArmorStand as = (ArmorStand) loc.getWorld().spawnEntity(loc, EntityType.ARMOR_STAND);
+            as.setGravity(false);
+            as.setVisible(false);
+            as.getEquipment().setHelmet(new ItemStack(Material.DIAMOND_BLOCK));
+            dlables.add(as);
+
+            new BukkitRunnable() {
+
+                public void run() {
+                    float yaw = as.getLocation().getYaw() + 10;
+                    loc.setYaw(yaw);
+                    as.teleport(loc);
+                }
+            }.runTaskTimer(plugin, 0, 3);
+        }
+
+        for (Location loc : arena.getEmeraldGens()) {
+            loc.add(0.5, 0.5, 0.5);
+            ArmorStand as = (ArmorStand) loc.getWorld().spawnEntity(loc, EntityType.ARMOR_STAND);
+            as.setGravity(false);
+            as.setVisible(false);
+            as.getEquipment().setHelmet(new ItemStack(Material.EMERALD_BLOCK));
+            elables.add(as);
+
+            new BukkitRunnable() {
+
+                public void run() {
+                    float yaw = as.getLocation().getYaw() + 10;
+                    loc.setYaw(yaw);
+                    as.teleport(loc);
+                }
+            }.runTaskTimer(plugin, 0, 3);
+        }
+    }
+
     /* ----------- PLAYERS ------------ */
 
     public void playerDied(Player player, String message) {
@@ -329,6 +532,8 @@ public class Game {
         if (!getTeam(player).hasBed()) {
             getTeam(player).died(player);
         } else {
+            player.setGameMode(GameMode.SPECTATOR);
+            deathCountDown(player, getTeam(player));
             player.teleport(getTeam(player).getSpawn());
         }
     }
@@ -337,8 +542,8 @@ public class Game {
         team.setHasBed(false);
         statsManager.playerBrokeBed(player);
         broadcastWithoutPrefix("&f&lBED DESTRUCTION > " + team.getColor() + team.getName() + "'s &cbed was destroyed by " + player.getName() + "!");
-        for (Player p : team.getPlayers()){
-            p.sendTitle(ChatColor.translateAlternateColorCodes('&', "&cBED DESTROYED"), "", 1,3,1);
+        for (Player p : team.getPlayers()) {
+            p.sendTitle(ChatColor.translateAlternateColorCodes('&', "&cBED DESTROYED"), "", 1, 60, 1);
             p.playSound(player.getLocation(), Sound.ENTITY_ENDER_DRAGON_DEATH, 1, 1);
         }
         updateScoreboards();
@@ -351,13 +556,14 @@ public class Game {
                 players.add(player);
                 statsManager.addPlayer(player);
                 player.getEnderChest().setContents(new ItemStack[0]);
+                player.getActivePotionEffects().clear();
                 player.getInventory().clear();
-                player.getInventory().setItem(9, getLeaveItem());
+                player.getInventory().setItem(8, getLeaveItem());
                 updateScoreboards();
 
-                if(arena.getLobbyLocation() != null) {
+                if (arena.getLobbyLocation() != null) {
                     player.teleport(arena.getLobbyLocation());
-                }else{
+                } else {
                     Bedwars.sendMessage(player, "&cNo lobby has been set!");
                 }
                 broadcast(player.getName() + " has joined the game! &6(" + players.size() + "/" + arena.getMinPlayers() + ")");
@@ -393,11 +599,11 @@ public class Game {
     }
 
     /* ------------ MISC ------------- */
-    public ItemStack getLeaveItem(){
+    public ItemStack getLeaveItem() {
         ItemStack item = new ItemStack(Material.RED_BED);
         ItemMeta im = item.getItemMeta();
-        im.setDisplayName(ChatColor.translateAlternateColorCodes('&',"&c&lReturn to Lobby &7(Right Click)"));
-        im.setLore(Arrays.asList(ChatColor.translateAlternateColorCodes('&',"&7Right-click to return to the lobby.")));
+        im.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&c&lReturn to Lobby &7(Right Click)"));
+        im.setLore(Arrays.asList(ChatColor.translateAlternateColorCodes('&', "&7Right-click to return to the lobby.")));
         item.setItemMeta(im);
         return item;
     }
@@ -427,10 +633,20 @@ public class Game {
         List<Player> playersToAdd = new ArrayList<>();
         playersToAdd.addAll(players);
 
+
         while (playersToAdd.size() > 0) {
             for (GameTeam team : teams) {
                 if (playersToAdd.size() != 0) {
                     team.addPlayer(playersToAdd.get(0));
+                    //CLEAR ENTITIES
+                    List<Entity> list = team.getSpawn().getWorld().getEntities();
+                    Iterator<Entity> entities = list.iterator();
+                    while (entities.hasNext()) {
+                        Entity entity = entities.next();
+                        if (entity instanceof Item) {
+                            entity.remove();
+                        }
+                    }
 
                     playersToAdd.remove(0);
                 } else {
@@ -438,16 +654,38 @@ public class Game {
                 }
             }
         }
-        for(Player player : players){
+        for (Player player : players) {
             player.getInventory().clear();
         }
         for (GameTeam team : teams) {
             upgradesManager.addTeam(team);
             team.teleportPlayers();
-
+            if(team.getPlayers().size() == 0){
+                team.setHasBed(false);
+            }
         }
         updateScoreboards();
         equipArmor();
+    }
+
+    private void endGame(GameTeam team) {
+        state = GameState.ENDING;
+        for(Player player : players){
+            if(team.getPlayers().contains(player)){
+                player.sendTitle(ChatColor.translateAlternateColorCodes('&',"&6&lVictory"), "", 20, 60, 20);
+                player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 1);
+            }else{
+                player.sendTitle(ChatColor.translateAlternateColorCodes('&',"&c&lGAME OVER"), "", 20, 60, 20);
+                player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 1);
+            }
+        }
+
+        new BukkitRunnable() {
+            public void run() {
+                reset();
+            }
+        }.runTaskLater(plugin, 5*20L);
+
     }
 
     public void updateScoreboards() {
@@ -456,8 +694,8 @@ public class Game {
         }
     }
 
-    public void equipArmor(){
-        for(GameTeam team : teams){
+    public void equipArmor() {
+        for (GameTeam team : teams) {
             ItemStack helm = new ItemStack(Material.LEATHER_HELMET);
             LeatherArmorMeta helmM = (LeatherArmorMeta) helm.getItemMeta();
             helmM.setColor(Bedwars.translateChatColorToColor(team.getColor()));
@@ -469,21 +707,82 @@ public class Game {
             chest.setItemMeta(chestM);
 
             ItemStack leg = new ItemStack(Material.LEATHER_LEGGINGS);
-            LeatherArmorMeta legM = (LeatherArmorMeta)  leg.getItemMeta();
+            LeatherArmorMeta legM = (LeatherArmorMeta) leg.getItemMeta();
             legM.setColor(Bedwars.translateChatColorToColor(team.getColor()));
             leg.setItemMeta(legM);
 
             ItemStack boot = new ItemStack(Material.LEATHER_BOOTS);
-            LeatherArmorMeta bootM = (LeatherArmorMeta)  boot.getItemMeta();
+            LeatherArmorMeta bootM = (LeatherArmorMeta) boot.getItemMeta();
             bootM.setColor(Bedwars.translateChatColorToColor(team.getColor()));
             boot.setItemMeta(bootM);
 
-            for (Player player : team.getPlayers()){
+            for (Player player : team.getPlayers()) {
                 player.getEquipment().setHelmet(helm);
                 player.getEquipment().setChestplate(chest);
                 player.getEquipment().setLeggings(leg);
                 player.getEquipment().setBoots(boot);
             }
         }
+    }
+
+    private boolean isClose(Location loc1, Location loc2, int dist) {
+        if (loc1.getWorld() != loc2.getWorld()) {
+            return false;
+        }
+
+        if (!(loc1.getBlockX() < loc2.getBlockX()+dist && loc1.getBlockX() > loc2.getBlockX()-dist)) {
+            return false;
+        }
+
+        if (!(loc1.getBlockY() < loc2.getBlockY()+dist && loc1.getBlockY() > loc2.getBlockY()-dist)) {
+            return false;
+        }
+
+        if (!(loc1.getBlockZ() < loc2.getBlockZ()+dist && loc1.getBlockZ() > loc2.getBlockZ()-dist)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public void reset() {
+        blockManager.restoreMap();
+        for (ArmorStand stand : dlables) {
+            stand.remove();
+        }
+        for (ArmorStand stand : diamondArmorStands) {
+            stand.remove();
+        }
+        for (ArmorStand stand : elables) {
+            stand.remove();
+        }
+        for (ArmorStand stand : emeraldArmorStands) {
+            stand.remove();
+        }
+        for (Player player : players) {
+            player.setGameMode(GameMode.SURVIVAL);
+            player.teleport(arena.getMainLobbyLocation());
+            nameManager.restoreName(player);
+            player.getInventory().clear();
+            player.setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
+        }
+        for (GameTeam team : teams) {
+            List<Entity> list = team.getSpawn().getWorld().getEntities();
+            Iterator<Entity> entities = list.iterator();
+            while (entities.hasNext()) {
+                Entity entity = entities.next();
+                if (entity instanceof Item) {
+                    entity.remove();
+                } else if (entity instanceof ArmorStand) {
+                    ArmorStand as = (ArmorStand) entity;
+                    if (as.getCustomName().contains("Diamond") || as.getCustomName().contains("Spawns in") || as.getCustomName().contains("Emerald")) {
+                        as.remove();
+                        entity.remove();
+                    }
+                }
+            }
+        }
+
+        Bedwars.getGameManager().resetGame(this);
     }
 }

@@ -7,6 +7,15 @@ public class TeamUpgrades {
     private int genLevel = 0;
     private boolean hasAlarm = false;
     private boolean hasFatuge = false;
+    private boolean hasHeal = false;
+
+    public void buyHeal(){
+        hasHeal = true;
+    }
+
+    public boolean hasHeal() {
+        return hasHeal;
+    }
 
     public void buySharp(){
         hasSharp = true;

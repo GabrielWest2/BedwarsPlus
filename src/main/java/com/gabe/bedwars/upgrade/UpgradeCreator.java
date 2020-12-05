@@ -143,8 +143,37 @@ public class UpgradeCreator {
             }
         }
 
+        ItemStack heal = new ItemStack(Material.BEACON);
+        ItemMeta healm = heal.getItemMeta();
+        healm.setDisplayName(getName("Health Pool", upgrades.hasHeal()));
+        List<String> lore4 = new ArrayList<>();
+        lore4.add(ChatColor.GRAY+"Everyone on your team heals one");
+        lore4.add(ChatColor.GRAY+"heart every five seconds when");
+        lore4.add(ChatColor.GRAY+"near your bed.");
+        lore4.add(" ");
+        lore4.add(ChatColor.GRAY+"Cost: "+ChatColor.AQUA+"3 Diamonds");
+        lore4.add(" ");
+        lore4.add(bottomText(player, 3, upgrades.hasHeal()));
+        healm.setLore(lore4);
+        heal.setItemMeta(healm);
 
+        inv.setItem(14, heal);
+        if(upgrades.hasHeal()){
+            inv.setItem(14+9, s);
+        }else{
+            inv.setItem(14+9, r);
+        }
 
+        ItemStack csoon = new ItemStack(Material.BARRIER);
+        ItemMeta cmeta = csoon.getItemMeta();
+        cmeta.setDisplayName(ChatColor.RED+""+ChatColor.BOLD+"Comming Soon!");
+        csoon.setItemMeta(cmeta);
+
+        inv.setItem(15, csoon);
+        inv.setItem(16, csoon);
+
+        inv.setItem(15+9, r);
+        inv.setItem(16+9, r);
 
         return inv;
     }

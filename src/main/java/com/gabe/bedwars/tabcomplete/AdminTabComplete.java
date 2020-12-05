@@ -1,5 +1,7 @@
 package com.gabe.bedwars.tabcomplete;
 
+import com.gabe.bedwars.Bedwars;
+import com.gabe.bedwars.arenas.Arena;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
@@ -53,6 +55,19 @@ public class AdminTabComplete implements TabCompleter {
                         cmds.add("debug");
                     }
                     return cmds;
+            }
+            if(player.hasPermission("bedwars.admin") && args.length==2){
+                List<String> cmds = new ArrayList<>();
+
+                if(args[0].equalsIgnoreCase("setlobby") || args[0].equalsIgnoreCase("setmainlobby") || args[0].equalsIgnoreCase("addgen") || args[0].equalsIgnoreCase("addteam") || args[0].equalsIgnoreCase("setteamgen") || args[0].equalsIgnoreCase("setspawn") || args[0].equalsIgnoreCase("setbed")){
+                    for(Arena a : Bedwars.getArenaManager().getArenaList()){
+                        if(a.getName().startsWith(args[1])){
+                            cmds.add(a.getName());
+                        }
+                    }
+                }
+
+                return cmds;
             }
         }
         return null;
