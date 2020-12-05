@@ -1,15 +1,17 @@
 # Bedwars 
-Paper bedwars minigame plugin!  
+Lightweight recreation of Hypixels Bedwars plugin for paper!
 Supported version [1.16.4]
 ## Features
 - Normal bedwars gameplay!
-- Ingame item & team shops
+- Ingame item shop
+- Team upgrades shop
 - Arena break/place protection
 - Arena resseting
 - Countdown
 - Colored armor
 - Animated bossbar with custom message
 - Custom messages and prefix
+- Tab completion on most commands
 - Placeholder API suport[COMMING SOON]
 # Setup
 /bwa create [arena name] - Creates arena  
