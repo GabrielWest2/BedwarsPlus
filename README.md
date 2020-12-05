@@ -11,6 +11,7 @@ Supported version [1.16.4]
 - Colored armor
 - Animated bossbar with custom message
 - Custom messages and prefix
+- Tab completion on most commands
 - Placeholder API suport[COMMING SOON]
 # Setup
 /bwa create [arena name] - Creates arena  
