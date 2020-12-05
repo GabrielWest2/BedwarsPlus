@@ -1,6 +1,6 @@
 # Bedwars 
-Paper bedwars minigame plugin!  
-Supported version [1.16.4]
+Lightweight recreation of Hypixels Bedwars plugin!
+Supported version Paper [1.16.4]
 ## Features
 - Normal bedwars gameplay!
 - Ingame item shop
