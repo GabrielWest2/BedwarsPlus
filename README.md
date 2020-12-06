@@ -1,4 +1,4 @@
-# Bedwars <a><img src="https://img.shields.io/badge/Spigot-download-orange"></a>
+# Bedwars [![Download at SpigotMC.org](https://img.shields.io/badge/download-SpigotMC.org-orange.svg)](https://www.spigotmc.org/resources/00000/)
 Lightweight recreation of Hypixels Bedwars plugin for paper!
 Supported version [1.16.4]
 ## Features
