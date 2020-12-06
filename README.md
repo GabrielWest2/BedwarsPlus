@@ -1,4 +1,4 @@
-# Bedwars 
+# Bedwars [![Download at SpigotMC.org](https://img.shields.io/badge/download-SpigotMC.org-orange.svg)](https://www.spigotmc.org/resources/00000/)
 Lightweight recreation of Hypixels Bedwars plugin for paper!
 Supported version [1.16.4]
 ## Features
@@ -14,6 +14,9 @@ Supported version [1.16.4]
 - Tab completion on most commands
 - Placeholder API suport[COMMING SOON]
 # Setup
+<b>Warning: Each bedwars arena must be in its own world.</b>  
+You can use plugins like <a href="https://www.spigotmc.org/resources/multiverse-core.390/">Multiverse Core</a> to load or create worlds.  
+  
 /bwa create [arena name] - Creates arena  
 /bwa setlobby [arena name] - Sets the waiting lobby  
 /bwa setmainlobby [arena name] - Sets the location that the players get teleported to after the game  
