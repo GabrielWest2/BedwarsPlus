@@ -1,4 +1,4 @@
-# Bedwars <img src="https://img.shields.io/badge/Spigot-download-orange">
+# Bedwars <img src="https://img.shields.io/badge/Spigot-download-orange" href="https://www.spigotmc.org/resources/multiverse-core.390/">
 Lightweight recreation of Hypixels Bedwars plugin for paper!
 Supported version [1.16.4]
 ## Features
