@@ -14,7 +14,7 @@ Supported version [1.16.4]
 - Tab completion on most commands
 - Placeholder API suport[COMMING SOON]
 # Setup
-<b>Warning: Each bedwars arena must me in its own world.</b>  
+<b>Warning: Each bedwars arena must be in its own world.</b>  
 You can use plugins like <a href="https://www.spigotmc.org/resources/multiverse-core.390/">Multiverse Core</a> to load or create worlds.  
   
 /bwa create [arena name] - Creates arena  
