@@ -1,4 +1,4 @@
-# Bedwars [![Download at SpigotMC.org](https://img.shields.io/badge/download-SpigotMC.org-orange.svg)](https://www.spigotmc.org/resources/00000/) [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=ThatKingGuy_Bedwars&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=ThatKingGuy_Bedwars)[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ThatKingGuy_Bedwars&metric=alert_status)](https://sonarcloud.io/dashboard?id=ThatKingGuy_Bedwars)
+# Bedwars [![Download at SpigotMC.org](https://img.shields.io/badge/download-SpigotMC.org-orange.svg)](https://www.spigotmc.org/resources/00000/) [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=ThatKingGuy_Bedwars&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=ThatKingGuy_Bedwars) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ThatKingGuy_Bedwars&metric=alert_status)](https://sonarcloud.io/dashboard?id=ThatKingGuy_Bedwars)
 Lightweight recreation of Hypixels Bedwars plugin for paper!
 Supported version [1.16.4]
 ## Features
