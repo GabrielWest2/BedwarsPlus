@@ -1,6 +1,7 @@
 package com.gabe.bedwars.listeners;
 
 import com.gabe.bedwars.Bedwars;
+import com.gabe.bedwars.api.events.GameStateSwitchEvent;
 import com.gabe.bedwars.managers.GameManager;
 import com.gabe.bedwars.GameState;
 import com.gabe.bedwars.arenas.Game;
@@ -143,7 +144,7 @@ public class GameListener implements Listener {
                 if (game.getState() == GameState.PLAYING) {
                     if (event.getDamager() instanceof Player) {
                         Player damager = (Player) event.getDamager();
-                        Bedwars.sendMessage(damager, "&a" + player.getName() + " is now at &c" + Math.round(player.getHealth()) + " ❤");
+                        Bedwars.sendMessage(damager, "&a" + player.getName() + " is now at &c" + Math.round(player.getHealth()) + " HP");
                     }
                 } else {
                     event.setCancelled(true);
@@ -243,7 +244,6 @@ public class GameListener implements Listener {
             }
             game.updateScoreboards();
         }
-        game.updateScoreboards();
     }
 
     @EventHandler
@@ -328,4 +328,6 @@ public class GameListener implements Listener {
             event.setCancelled(true);
         }
     }
+
+
 }

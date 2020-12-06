@@ -14,6 +14,8 @@ public class BedwarsApi {
      * @author ThatKingGuy
      */
 
+
+
     /**
      * Returns a static ArenaManager
      * instance.
@@ -48,5 +50,18 @@ public class BedwarsApi {
      */
     public Set<Game> getRunningGames(){
         return Bedwars.getGameManager().getGameList();
+    }
+
+    /**
+     * Returns a game with the specified name
+     * @see Game
+     */
+    public Game getGame(String str){
+        for(Game game : Bedwars.getGameManager().getGameList()){
+            if(game.getName().equals(str)){
+                return game;
+            }
+        }
+        return null;
     }
 }

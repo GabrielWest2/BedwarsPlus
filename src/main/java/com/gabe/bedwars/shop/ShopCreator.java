@@ -105,7 +105,7 @@ public class ShopCreator {
                  lore.add(ChatColor.GRAY+"Cost: "+ChatColor.GOLD+item.getPrice()+" "+getMatName(item));
                  break;
              case EMERALD:
-                 lore.add(ChatColor.GRAY+"Cost: "+ChatColor.DARK_GREEN+item.getPrice()+" "+getMatName(item));
+                 lore.add(ChatColor.GRAY+"Cost: "+ChatColor.GREEN+item.getPrice()+" "+getMatName(item));
                  break;
              default:
                  break;

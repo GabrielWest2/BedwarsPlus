@@ -3,6 +3,7 @@ package com.gabe.bedwars.arenas;
 import com.gabe.bedwars.Bedwars;
 import com.gabe.bedwars.GameState;
 import com.gabe.bedwars.ScoreboardFactoryUtils;
+import com.gabe.bedwars.api.events.GameStateSwitchEvent;
 import com.gabe.bedwars.managers.GameBlockManager;
 import com.gabe.bedwars.managers.GameStatsManager;
 import com.gabe.bedwars.managers.NameManager;
@@ -16,6 +17,7 @@ import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
+import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
@@ -52,7 +54,11 @@ public class Game {
         statsManager = new GameStatsManager();
         upgradesManager = new TeamUpgradesManager();
         nameManager = new NameManager();
-        state = GameState.WAITING;
+        if(state != GameState.WAITING){
+            callEvent(new GameStateSwitchEvent(state, GameState.WAITING, this));
+            state = GameState.WAITING;
+        }
+
         this.arena = arena;
         this.plugin = plugin;
         this.players = new HashSet<>();
@@ -178,7 +184,6 @@ public class Game {
                         }
                     }
                 }
-                Bukkit.getLogger().info(teamCount+"");
                 if(teamCount<2){
                     for(GameTeam team : teams){
                         if(team.hasBed() || team.getAlivePlayers().size()>0){
@@ -629,7 +634,10 @@ public class Game {
     }
 
     private void startGame() {
-        state = GameState.PLAYING;
+        if(state != GameState.PLAYING){
+            callEvent(new GameStateSwitchEvent(state, GameState.PLAYING, this));
+            state = GameState.PLAYING;
+        }
         List<Player> playersToAdd = new ArrayList<>();
         playersToAdd.addAll(players);
 
@@ -669,7 +677,10 @@ public class Game {
     }
 
     private void endGame(GameTeam team) {
-        state = GameState.ENDING;
+        if(state != GameState.ENDING){
+            callEvent(new GameStateSwitchEvent(state, GameState.ENDING, this));
+            state = GameState.ENDING;
+        }
         for(Player player : players){
             if(team.getPlayers().contains(player)){
                 player.sendTitle(ChatColor.translateAlternateColorCodes('&',"&6&lVictory"), "", 20, 60, 20);
@@ -784,5 +795,9 @@ public class Game {
         }
 
         Bedwars.getGameManager().resetGame(this);
+    }
+
+    private <e extends Event> void callEvent(e event){
+        Bukkit.getServer().getPluginManager().callEvent(event);
     }
 }
