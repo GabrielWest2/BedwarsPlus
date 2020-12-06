@@ -1,4 +1,4 @@
-# Bedwars [![Github All Releases](https://img.shields.io/github/downloadsThatKingGuy/Bedwars/total.svg)]()
+# Bedwars 
 Lightweight recreation of Hypixels Bedwars plugin for paper!
 Supported version [1.16.4]
 ## Features
