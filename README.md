@@ -1,4 +1,4 @@
-# Bedwars https://img.shields.io/static/v1?label=download&message=spigot&color=orange
+# Bedwars https://img.shields.io/badge/Spigot-download-orange
 Lightweight recreation of Hypixels Bedwars plugin for paper!
 Supported version [1.16.4]
 ## Features
