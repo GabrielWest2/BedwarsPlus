@@ -5,13 +5,13 @@ import com.gabe.bedwars.arenas.Game;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-public class GameStateSwitchEvent extends Event {
+public class BWGameStateSwitchEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
     private final GameState from;
     private final GameState to;
     private final Game game;
 
-    public GameStateSwitchEvent(GameState from, GameState to, Game game) {
+    public BWGameStateSwitchEvent(GameState from, GameState to, Game game) {
         this.from = from;
         this.to = to;
         this.game = game;

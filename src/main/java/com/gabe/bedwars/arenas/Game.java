@@ -3,7 +3,9 @@ package com.gabe.bedwars.arenas;
 import com.gabe.bedwars.Bedwars;
 import com.gabe.bedwars.GameState;
 import com.gabe.bedwars.ScoreboardFactoryUtils;
-import com.gabe.bedwars.api.events.GameStateSwitchEvent;
+import com.gabe.bedwars.api.events.BWGameStateSwitchEvent;
+import com.gabe.bedwars.api.events.BWJoinGameEvent;
+import com.gabe.bedwars.api.events.BWLeaveGameEvent;
 import com.gabe.bedwars.managers.GameBlockManager;
 import com.gabe.bedwars.managers.GameStatsManager;
 import com.gabe.bedwars.managers.NameManager;
@@ -21,6 +23,7 @@ import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.plugin.IllegalPluginAccessException;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -48,6 +51,7 @@ public class Game {
     private GameState state;
     private boolean spawnDiamond = false;
     private boolean spawnEmerald = false;
+    private Game game = this;
 
     public Game(Arena arena, Bedwars plugin) {
         blockManager = new GameBlockManager();
@@ -55,7 +59,7 @@ public class Game {
         upgradesManager = new TeamUpgradesManager();
         nameManager = new NameManager();
         if(state != GameState.WAITING){
-            callEvent(new GameStateSwitchEvent(state, GameState.WAITING, this));
+            callEvent(new BWGameStateSwitchEvent(state, GameState.WAITING, this));
             state = GameState.WAITING;
         }
 
@@ -174,22 +178,29 @@ public class Game {
 
             @Override
             public void run() {
-                teamCount = 0;
-                for(GameTeam team : teams){
-                    if(team.hasBed()){
-                        teamCount++;
-                    }else{
-                        if(team.getAlivePlayers().size()>0){
-                            teamCount++;
+                if(state == GameState.PLAYING) {
+                    for (GameTeam team : teams) {
+                        if (team.getPlayers().size() == 0) {
+                            team.setHasBed(false);
                         }
                     }
-                }
-                if(teamCount<2){
-                    for(GameTeam team : teams){
-                        if(team.hasBed() || team.getAlivePlayers().size()>0){
-                            endGame(team);
-                            cancel();
-                            return;
+                    teamCount = 0;
+                    for (GameTeam team : teams) {
+                        if (team.hasBed()) {
+                            teamCount++;
+                        } else {
+                            if (team.getAlivePlayers().size() > 0) {
+                                teamCount++;
+                            }
+                        }
+                    }
+                    if (teamCount < 2) {
+                        for (GameTeam team : teams) {
+                            if (team.hasBed() || team.getAlivePlayers().size() > 0) {
+                                endGame(team);
+                                cancel();
+                                return;
+                            }
                         }
                     }
                 }
@@ -428,6 +439,7 @@ public class Game {
             public void run() {
                 if (count == 0) {
                     player.setGameMode(GameMode.SURVIVAL);
+                    team.getSpawn().getWorld().loadChunk(team.getSpawn().getChunk());
                     player.teleport(team.getSpawn());
                     cancel();
                 } else {
@@ -532,7 +544,11 @@ public class Game {
             player.setGameMode(GameMode.SPECTATOR);
             getTeam(player).playerDied(player);
         }
-        player.teleport(getTeam(player).getSpawn());
+        GameTeam team = getTeam(player);
+        team.getSpawn().getWorld().loadChunk(team.getSpawn().getChunk());
+        team.getSpawn().getWorld().loadChunk(team.getSpawn().getChunk());
+        player.teleport(team.getSpawn());
+
 
         if (!getTeam(player).hasBed()) {
             getTeam(player).died(player);
@@ -557,25 +573,31 @@ public class Game {
     public void addPlayer(Player player) {
         if (getState() == GameState.WAITING) {
             if (players.size() < arena.getMaxPlayers()) {
-                nameManager.addPlayer(player);
-                players.add(player);
-                statsManager.addPlayer(player);
-                player.getEnderChest().setContents(new ItemStack[0]);
-                player.getActivePotionEffects().clear();
-                player.getInventory().clear();
-                player.getInventory().setItem(8, getLeaveItem());
-                updateScoreboards();
+                BWJoinGameEvent event = new BWJoinGameEvent(this, player);
+                callEvent(event);
 
-                if (arena.getLobbyLocation() != null) {
-                    player.teleport(arena.getLobbyLocation());
-                } else {
-                    Bedwars.sendMessage(player, "&cNo lobby has been set!");
-                }
-                broadcast(player.getName() + " has joined the game! &6(" + players.size() + "/" + arena.getMinPlayers() + ")");
-                if (players.size() >= arena.getMinPlayers()) {
-                    hasPlayers = true;
-                    if (timer == -1) {
-                        startCountDown();
+                if(!event.isCancelled()) {
+                    nameManager.addPlayer(player);
+                    players.add(player);
+                    statsManager.addPlayer(player);
+                    player.getEnderChest().setContents(new ItemStack[0]);
+                    player.getActivePotionEffects().clear();
+                    player.getInventory().clear();
+                    player.getInventory().setItem(8, getLeaveItem());
+                    updateScoreboards();
+
+                    if (arena.getLobbyLocation() != null) {
+                        arena.getLobbyLocation().getWorld().loadChunk(arena.getLobbyLocation().getChunk());
+                        player.teleport(arena.getLobbyLocation());
+                    } else {
+                        Bedwars.sendMessage(player, "&cNo lobby has been set!");
+                    }
+                    broadcast(player.getName() + " has joined the game! &6(" + players.size() + "/" + arena.getMinPlayers() + ")");
+                    if (players.size() >= arena.getMinPlayers()) {
+                        hasPlayers = true;
+                        if (timer == -1) {
+                            startCountDown();
+                        }
                     }
                 }
             }
@@ -585,22 +607,27 @@ public class Game {
     }
 
     public void removePlayer(Player player) {
-        players.remove(player);
-        for (GameTeam t : teams) {
-            if (t.getPlayers().contains(player)) {
-                t.removePlayer(player);
+        BWLeaveGameEvent event = new BWLeaveGameEvent(this, player);
+        callEvent(event);
+        if(!event.isCancelled()) {
+            players.remove(player);
+            for (GameTeam t : teams) {
+                if (t.getPlayers().contains(player)) {
+                    t.removePlayer(player);
+                }
             }
+            if (players.size() < arena.getMinPlayers()) {
+                hasPlayers = false;
+            }
+            statsManager.removePlayer(player);
+            arena.getMainLobbyLocation().getWorld().loadChunk(arena.getMainLobbyLocation().getChunk());
+            player.teleport(arena.getMainLobbyLocation());
+            broadcast(player.getName() + " has left the game! &6(" + players.size() + "/" + arena.getMinPlayers() + ")");
+            updateScoreboards();
+            nameManager.restoreName(player);
+            player.getInventory().clear();
+            player.setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
         }
-        if (players.size() < arena.getMinPlayers()) {
-            hasPlayers = false;
-        }
-        statsManager.removePlayer(player);
-        player.teleport(arena.getMainLobbyLocation());
-        broadcast(player.getName() + " has left the game! &6(" + players.size() + "/" + arena.getMinPlayers() + ")");
-        updateScoreboards();
-        nameManager.restoreName(player);
-        player.getInventory().clear();
-        player.setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
     }
 
     /* ------------ MISC ------------- */
@@ -635,7 +662,7 @@ public class Game {
 
     private void startGame() {
         if(state != GameState.PLAYING){
-            callEvent(new GameStateSwitchEvent(state, GameState.PLAYING, this));
+            callEvent(new BWGameStateSwitchEvent(state, GameState.PLAYING, this));
             state = GameState.PLAYING;
         }
         List<Player> playersToAdd = new ArrayList<>();
@@ -678,7 +705,7 @@ public class Game {
 
     private void endGame(GameTeam team) {
         if(state != GameState.ENDING){
-            callEvent(new GameStateSwitchEvent(state, GameState.ENDING, this));
+            callEvent(new BWGameStateSwitchEvent(state, GameState.ENDING, this));
             state = GameState.ENDING;
         }
         for(Player player : players){
@@ -693,6 +720,8 @@ public class Game {
 
         new BukkitRunnable() {
             public void run() {
+                    callEvent(new BWGameStateSwitchEvent(state, GameState.RESSETING, game));
+                    state = GameState.RESSETING;
                 reset();
             }
         }.runTaskLater(plugin, 5*20L);
@@ -772,6 +801,7 @@ public class Game {
         }
         for (Player player : players) {
             player.setGameMode(GameMode.SURVIVAL);
+            arena.getMainLobbyLocation().getWorld().loadChunk(arena.getMainLobbyLocation().getChunk());
             player.teleport(arena.getMainLobbyLocation());
             nameManager.restoreName(player);
             player.getInventory().clear();
@@ -794,7 +824,11 @@ public class Game {
             }
         }
 
-        Bedwars.getGameManager().resetGame(this);
+        try{
+            Bedwars.getGameManager().resetGame(this);
+        }catch (IllegalPluginAccessException e){
+            Bukkit.getLogger().info("Reset game named: " + getName());
+        }
     }
 
     private <e extends Event> void callEvent(e event){

@@ -1,7 +1,8 @@
 package com.gabe.bedwars.listeners;
 
 import com.gabe.bedwars.Bedwars;
-import com.gabe.bedwars.api.events.GameStateSwitchEvent;
+import com.gabe.bedwars.api.events.BWJoinGameEvent;
+import com.gabe.bedwars.api.events.BWLeaveGameEvent;
 import com.gabe.bedwars.managers.GameManager;
 import com.gabe.bedwars.GameState;
 import com.gabe.bedwars.arenas.Game;
@@ -14,11 +15,13 @@ import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -106,10 +109,10 @@ public class GameListener implements Listener {
 
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent event) {
-        if(event.getBlock().getType() == Material.TNT){
+        if (event.getBlock().getType() == Material.TNT) {
             event.getBlock().getWorld().spawn(event.getBlock().getLocation(), TNTPrimed.class);
             event.getBlock().setType(Material.AIR);
-        }else {
+        } else {
 
             Player player = event.getPlayer();
             Game game = gameManager.getGame(player);
@@ -126,7 +129,7 @@ public class GameListener implements Listener {
     }
 
     @EventHandler
-    public void playerDamageEvent(EntityDamageByEntityEvent event) {
+    public void playerDamageByPlayerEvent(EntityDamageByEntityEvent event) {
         if (event.getEntity() instanceof NPC) {
             if (event.getDamager() instanceof Player) {
                 Player player = (Player) event.getDamager();
@@ -147,6 +150,19 @@ public class GameListener implements Listener {
                         Bedwars.sendMessage(damager, "&a" + player.getName() + " is now at &c" + Math.round(player.getHealth()) + " HP");
                     }
                 } else {
+                    event.setCancelled(true);
+                }
+            }
+        }
+    }
+
+    @EventHandler
+    public void onPlayerDamage(EntityDamageEvent event) {
+        if (event.getEntity() instanceof Player) {
+            Player player = (Player) event.getEntity();
+            Game game = gameManager.getGame(player);
+            if (game != null) {
+                if (game.getState() == GameState.WAITING) {
                     event.setCancelled(true);
                 }
             }
@@ -217,7 +233,7 @@ public class GameListener implements Listener {
                     Player attacker = player.getKiller();
                     game.playerDied(event.getEntity(), "was murdered by " + game.getTeam(attacker).getColor() + attacker.getName());
                     for (ItemStack i : player.getInventory()) {
-                        if(i !=null) {
+                        if (i != null) {
                             if (i.getType() == Material.IRON_INGOT || i.getType() == Material.GOLD_INGOT || i.getType() == Material.EMERALD || i.getType() == Material.DIAMOND) {
                                 player.getKiller().getInventory().addItem(i);
                                 player.getInventory().remove(i);
@@ -278,17 +294,17 @@ public class GameListener implements Listener {
     }
 
     @EventHandler
-    public void playerInteractEvent(PlayerInteractEvent event){
+    public void playerInteractEvent(PlayerInteractEvent event) {
         Action eventAction = event.getAction();
         Player player = event.getPlayer();
         Game game = gameManager.getGame(player);
 
-        if(game != null) {
+        if (game != null) {
             if (eventAction == Action.RIGHT_CLICK_AIR || eventAction == Action.RIGHT_CLICK_BLOCK) {
                 if (player.getItemInHand().getType().equals(Material.FIRE_CHARGE)) {
                     player.launchProjectile(Fireball.class).setVelocity(player.getLocation().getDirection().multiply(0.5));
                 }
-                if(game.getState() == GameState.WAITING){
+                if (game.getState() == GameState.WAITING) {
                     if (player.getItemInHand().getType().equals(Material.RED_BED)) {
                         event.setCancelled(true);
                         game.removePlayer(player);
@@ -299,35 +315,34 @@ public class GameListener implements Listener {
     }
 
     @EventHandler
-    public void onMoveItem(InventoryClickEvent  event){
+    public void onMoveItem(InventoryClickEvent event) {
         Player player = (Player) event.getWhoClicked();
         Game game = gameManager.getGame(player);
-        if(game != null){
-            if(game.getState() == GameState.WAITING){
+        if (game != null) {
+            if (game.getState() == GameState.WAITING) {
                 event.setCancelled(true);
             }
         }
     }
 
     @EventHandler
-    public void onPlayerDropItemEvent(PlayerDropItemEvent event){
+    public void onPlayerDropItemEvent(PlayerDropItemEvent event) {
         Player player = event.getPlayer();
         Game game = gameManager.getGame(player);
-        if(game != null){
-            if(game.getState() == GameState.WAITING){
+        if (game != null) {
+            if (game.getState() == GameState.WAITING) {
                 event.setCancelled(true);
             }
         }
     }
 
     @EventHandler
-    public void onArmorStandEdit(PlayerArmorStandManipulateEvent event){
+    public void onArmorStandEdit(PlayerArmorStandManipulateEvent event) {
         Player player = event.getPlayer();
         Game game = gameManager.getGame(player);
-        if(game != null){
+        if (game != null) {
             event.setCancelled(true);
         }
     }
-
 
 }
