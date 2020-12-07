@@ -1,6 +1,8 @@
 package com.gabe.bedwars.listeners;
 
 import com.gabe.bedwars.Bedwars;
+import com.gabe.bedwars.api.events.BWBreakBedEvent;
+import com.gabe.bedwars.api.events.BWGameStateSwitchEvent;
 import com.gabe.bedwars.api.events.BWJoinGameEvent;
 import com.gabe.bedwars.api.events.BWLeaveGameEvent;
 import com.gabe.bedwars.managers.GameManager;
@@ -80,6 +82,7 @@ public class GameListener implements Listener {
             }
             if (event.getBlock().getType().name().contains("BED")) {
                 event.setCancelled(true);
+
                 Location location = event.getBlock().getLocation();
                 for (GameTeam team : game.getTeams()) {
                     if (team.getBed() != null) {
@@ -89,7 +92,11 @@ public class GameListener implements Listener {
                                     Bedwars.sendMessage(player, "&cThis bed has already been destroyed!");
                                     return;
                                 }
-                                game.playerBrokeBed(player, team);
+                                BWBreakBedEvent e = new BWBreakBedEvent(game, player, team);
+                                game.callEvent(e);
+                                if(!e.isCancelled()) {
+                                    game.playerBrokeBed(player, team);
+                                }
                             } else {
                                 Bedwars.sendMessage(player, "&cYou cant break your own bed!");
                             }
@@ -344,5 +351,7 @@ public class GameListener implements Listener {
             event.setCancelled(true);
         }
     }
+
+
 
 }

@@ -831,7 +831,7 @@ public class Game {
         }
     }
 
-    private <e extends Event> void callEvent(e event){
+    public  <e extends Event> void callEvent(e event){
         Bukkit.getServer().getPluginManager().callEvent(event);
     }
 }
