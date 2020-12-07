@@ -20,7 +20,7 @@ You can use plugins like <a href="https://www.spigotmc.org/resources/multiverse-
 /bwa create [arena name] - Creates arena  
 /bwa setlobby [arena name] - Sets the waiting lobby  
 /bwa setmainlobby [arena name] - Sets the location that the players get teleported to after the game  
-/bwa addgen [arena name] [diamond/emerald] - Add a diammond or emerald generator  
+/bwa addgen [arena name] [diamond/emerald] - Add a diamond or emerald generator  
 /bwa debug - Displays all of the arenas  
 /bwa save [arena name] - Save the arena (do this after you have added the teams)  
 <h3>Teams</h3>  
