@@ -309,6 +309,12 @@ public class GameListener implements Listener {
         if (game != null) {
             if (eventAction == Action.RIGHT_CLICK_AIR || eventAction == Action.RIGHT_CLICK_BLOCK) {
                 if (player.getItemInHand().getType().equals(Material.FIRE_CHARGE)) {
+                    event.setCancelled(true);
+                    try {
+                        player.getInventory().remove(new ItemStack(Material.FIRE_CHARGE));
+                    }catch (Exception e){
+                        //pretend like that didn't happen
+                    }
                     player.launchProjectile(Fireball.class).setVelocity(player.getLocation().getDirection().multiply(0.5));
                 }
                 if (game.getState() == GameState.WAITING) {

@@ -1,8 +1,8 @@
 package com.gabe.bedwars;
 
-import com.gabe.bedwars.api.BedwarsApi;
 import com.gabe.bedwars.arenas.Arena;
 import com.gabe.bedwars.arenas.Game;
+import com.gabe.bedwars.commands.admin.*;
 import com.gabe.bedwars.listeners.GameListener;
 import com.gabe.bedwars.listeners.ShopListener;
 import com.gabe.bedwars.listeners.UpgradeListener;
@@ -31,20 +31,22 @@ import java.util.List;
 
 public final class Bedwars extends JavaPlugin {
 
+    /* ---------- MANAGERS ----------- */
     private static ArenaManager arenaManager;
-    private YamlConfiguration config;
     private static GameManager gameManager;
     public static ShopCreator shopCreator;
     public static UpgradeCreator upgradeCreator;
+    /* ---------- DEFAULT CONFIG VALUES ----------- */
     public static String serverText = "yourserver.net";
     public static String prefix = "&8[&6BW&8] &8> &e";
-    public static List<String> bossBar = Arrays.asList("&e&lPlaying &f&lBEDWARS &e&lon &a&lYOURSERVER.NET","&e&lPlaying &f&lBEDWARS &e&lon &b&lYOURSERVER.NET","&e&lPlaying &f&lBEDWARS &e&lon &6&lYOURSERVER.NET");
+    public static List<String> bossBar = Arrays.asList("&e&lPlaying &f&lBEDWARS &e&lon &a&lYOURSERVER.NET", "&e&lPlaying &f&lBEDWARS &e&lon &b&lYOURSERVER.NET", "&e&lPlaying &f&lBEDWARS &e&lon &6&lYOURSERVER.NET");
     public static long bossbarDelay = 20;
+
+    private YamlConfiguration config;
     private String help = "\n&8*------------------------------------* \n" +
-            "&cBedwars Admin Help: &6v" + this.getDescription().getVersion() + "\n" +
+            "&cBedwarsPlus Admin Help: &6v" + this.getDescription().getVersion() + "\n" +
             "&e/bwa &6create <name> <minplayers> <maxplayers>\n" +
-            "&e/bwa &6debug\n" +
-            "&e/bwa &6setlobby <name>\n" +
+            "&e/bwa &6debug\n" + "&e/bwa &6setlobby <name>\n" +
             "&e/bwa &6setmainlobby <name>\n" +
             "&e/bwa &6addteam <name> <team name> <color>\n" +
             "&e/bwa &6setspawn <name> <team>\n" +
@@ -56,6 +58,7 @@ public final class Bedwars extends JavaPlugin {
             "&e/bwa &6save <name>\n" +
             "&8*------------------------------------* \n";
 
+    /* ---------- GETTERS ----------- */
     public static UpgradeCreator getUpgradeCreator() {
         return upgradeCreator;
     }
@@ -68,8 +71,11 @@ public final class Bedwars extends JavaPlugin {
         return gameManager;
     }
 
+    public static ArenaManager getArenaManager() {
+        return arenaManager;
+    }
 
-
+    /* ---------- OVERRIDE ----------- */
     public void onEnable() {
         saveConfig();
         getCommand("bwa").setTabCompleter(new AdminTabComplete());
@@ -81,11 +87,22 @@ public final class Bedwars extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new GameListener(), this);
         Bukkit.getPluginManager().registerEvents(new ShopListener(), this);
         Bukkit.getPluginManager().registerEvents(new UpgradeListener(), this);
-
-
     }
 
+    public void onDisable() {
+        //arenaManager.serialise();
+        if (gameManager != null) {
+            for (Game game : gameManager.getGameList()) {
+                if (gameManager.getGameList() != null) {
+                    if (game != null) {
+                        game.reset();
+                    }
+                }
+            }
+        }
+    }
 
+    /* ---------- CONFIG ----------- */
     public void saveConfig() {
         File file = new File(getDataFolder(), "config.yml");
 
@@ -102,7 +119,7 @@ public final class Bedwars extends JavaPlugin {
                 config.set("servername", "mc.server.net");
                 config.set("prefix", "&8[&6BW&8] &8> &e");
                 config.set("bossbardelay", 60);
-                config.set("bossbar", Arrays.asList("&e&lPlaying &f&lBEDWARS &e&lon &a&lYOURSERVER.NET","&e&lPlaying &f&lBEDWARS &e&lon &b&lYOURSERVER.NET","&e&lPlaying &f&lBEDWARS &e&lon &6&lYOURSERVER.NET"));
+                config.set("bossbar", Arrays.asList("&e&lPlaying &f&lBEDWARS &e&lon &a&lYOURSERVER.NET", "&e&lPlaying &f&lBEDWARS &e&lon &b&lYOURSERVER.NET", "&e&lPlaying &f&lBEDWARS &e&lon &6&lYOURSERVER.NET"));
 
                 try {
                     config.save(file);
@@ -118,273 +135,125 @@ public final class Bedwars extends JavaPlugin {
         }
     }
 
-    private void loadValues(){
+    private void loadValues() {
         serverText = config.getString("servername");
         bossbarDelay = config.getInt("bossbardelay");
         bossBar = config.getStringList("bossbar");
         prefix = config.getString("prefix");
     }
 
-    public void onDisable() {
-        //arenaManager.serialise();
-        if(gameManager != null) {
-            for (Game game : gameManager.getGameList()) {
-                if (gameManager.getGameList() != null) {
-                    if (game != null) {
-                        game.reset();
-                    }
-                }
-            }
-        }
-    }
-
-    public boolean isColor(String string) {
-        for (ChatColor c : ChatColor.values()) {
-            if (c.name().equalsIgnoreCase(string)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
+    /* ---------- COMMANDS ----------- */
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
             if (label.equalsIgnoreCase("bwa")) {
-                if(player.hasPermission("bedwars.admin")) {
-
-                    if (args.length > 0) {
-                        if (args[0].equalsIgnoreCase("help")) {
-                            sendMessage(player, false, help);
-                        } else if (args[0].equalsIgnoreCase("debug")) {
-                            if (arenaManager.getArenaList().size() > 0) {
-                                sendMessage(player, DebugUtils.generateDebug(arenaManager));
-                            } else {
-                                sendMessage(player, "There are no arenas to debug!");
-                            }
-                        } else if (args[0].equalsIgnoreCase("create")) {
-                            if (args.length > 3) {
-                                if (arenaManager.getArena(args[1]) != null) {
-                                    sendMessage(player, "Arena named &6" + args[1] + "&e already exists.");
-                                } else {
-                                    arenaManager.addArena(new Arena(args[1], Integer.parseInt(args[2]), Integer.parseInt(args[3])));
-                                    sendMessage(player, "Created arena named &6" + args[1] + "&e and set min players to &6" + args[2] + "&e and max players to &6" + args[3] + "&e.");
-                                }
-                            } else {
-                                sendMessage(player, "&cIncorrect Usage. Do /bwa create <name> <minplayers> <maxplayers>");
-                            }
-                        } else if (args[0].equalsIgnoreCase("addteam")) {
-                            if (args.length > 3) {
-                                if (arenaManager.getArena(args[1]) != null) {
-                                    Arena a = arenaManager.getArena(args[1]);
-                                    for (Team t : a.getTeams()) {
-                                        if (t.getName().equalsIgnoreCase(args[2])) {
-                                            sendMessage(player, "There is already a team named &6" + args[2] + "&e.");
-                                            return true;
-                                        }
-                                    }
-
-                                    if (isColor(args[3])) {
-                                        ChatColor color = ChatColor.valueOf(args[3].toUpperCase());
-                                        Team t = new Team(args[2], color);
-                                        a.addTeam(t);
-                                        sendMessage(player, "Created team named " + t.getColor() + args[2] + "&e.");
-                                    } else {
-                                        sendMessage(player, "Invalid color: &6" + args[3] + "&e.");
-                                    }
-
-                                } else {
-                                    sendMessage(player, "Arena named &6" + args[1] + "&e doesn't exist!");
-                                }
-                            } else {
-                                sendMessage(player, "&cIncorrect Usage. Do /bwa addteam <name> <team name> <color>");
-                            }
-                        } else if (args[0].equalsIgnoreCase("save")) {
-                            if (args.length > 1) {
-                                if (arenaManager.getArena(args[1]) != null) {
-                                    arenaManager.serialise(arenaManager.getArena(args[1]));
-                                    sendMessage(player, "Saved arena &6" + args[1] + "&e. To play, restart the server then type &6/bw join "+args[1]);
-                                } else {
-
-                                    sendMessage(player, "Arena named " + args[1] + "&e doesn't exist.");
-                                }
-                            } else {
-                                sendMessage(player, "&cIncorrect Usage. Do /bwa save <name>");
-                            }
-                        } else if (args[0].equalsIgnoreCase("setlobby")) {
-                            if (args.length > 1) {
-                                if (arenaManager.getArena(args[1]) != null) {
-                                    Arena a = arenaManager.getArena(args[1]);
-                                    a.setLobbyLocation(player.getLocation().toBlockLocation());
-                                    sendMessage(player, "Set the lobby of arena &6" + args[1] + "&e to &6x: " + a.getLobbyLocation().getBlockX() + " y: " + a.getLobbyLocation().getBlockY() + " z: " + a.getLobbyLocation().getBlockZ() + "&e.");
-                                } else {
-
-                                    sendMessage(player, "Arena named &6" + args[1] + "&e doesn't exist.");
-                                }
-                            } else {
-                                sendMessage(player, "&cIncorrect Usage. Do /bwa setlobby <name>");
-                            }
-                        } else if (args[0].equalsIgnoreCase("setmainlobby")) {
-                            if (args.length > 1) {
-                                if (arenaManager.getArena(args[1]) != null) {
-                                    Arena a = arenaManager.getArena(args[1]);
-                                    a.setMainLobbyLocation(player.getLocation().toBlockLocation());
-                                    sendMessage(player, "Set the mainlobby of arena &6" + args[1] + "&e to &6x: " + a.getMainLobbyLocation().getBlockX() + " y: " + a.getMainLobbyLocation().getBlockY() + " z: " + a.getMainLobbyLocation().getBlockZ() + "&e.");
-                                } else {
-
-                                    sendMessage(player, "Arena named " + args[1] + "&e doesn't exist.");
-                                }
-                            } else {
-                                sendMessage(player, "&cIncorrect Usage. Do /bwa setmainlobby <name>");
-                            }
-                        } else if (args[0].equalsIgnoreCase("addgen")) {
-                            if (args.length > 2) {
-                                if (arenaManager.getArena(args[1]) != null) {
-
-                                    Arena a = arenaManager.getArena(args[1]);
-                                    if (args[2].equalsIgnoreCase("diamond") || args[2].equalsIgnoreCase("emerald")) {
-                                        Location playerLoc = player.getLocation();
-                                        if (args[2].equalsIgnoreCase("diamond")) {
-                                            a.addDiamondGen(playerLoc);
-                                            sendMessage(player, "Added a &bDIAMOND &egenerator at &6x: " + playerLoc.getBlockX() + " y: " + playerLoc.getBlockY() + " z: " + playerLoc.getBlockZ() + "&e to &6" + args[1] + "&e.");
-                                        } else {
-                                            a.addEmeraldGen(playerLoc);
-                                            sendMessage(player, "Added a &aEMERALD &egenerator at &6x: " + playerLoc.getBlockX() + " y: " + playerLoc.getBlockY() + " z: " + playerLoc.getBlockZ() + "&e to &6" + args[1] + "&e.");
-                                        }
-                                    } else {
-                                        sendMessage(player, "&cIncorrect Usage. Do /bwa addgen <name> <diamond/emerald>");
-                                    }
-                                } else {
-
-                                    sendMessage(player, "Arena named " + args[1] + "&e doesn't exist.");
-                                }
-                            } else {
-                                sendMessage(player, "&cIncorrect Usage. Do /bwa addgen <name> <diamond/emerald>");
-                            }
-                        } else if (args[0].equalsIgnoreCase("setteamgen")) {
-                            if (args.length > 1) {
-                                if (arenaManager.getArena(args[1]) != null) {
-                                    Arena a = arenaManager.getArena(args[1]);
-                                    Team team = null;
-                                    for (Team t : a.getTeams()) {
-                                        if (t.getName().equals(args[2])) {
-                                            team = t;
-                                        }
-                                    }
-                                    if (team == null) {
-                                        sendMessage(player, "Team named &6" + args[2] + "&e doesn't exist.");
-                                        return true;
-                                    }
-                                    Location playerLoc = player.getLocation();
-                                    team.setGenerator(playerLoc);
-                                    sendMessage(player, "Set team " + team.getColor() + team.getName() + "&e's generator to &6x: " + playerLoc.getBlockX() + " y: " + playerLoc.getBlockY() + " z: " + playerLoc.getBlockZ() + "&e.");
-                                } else {
-
-                                    sendMessage(player, "Arena named &6" + args[1] + "&e doesn't exist.");
-                                }
-                            } else {
-                                sendMessage(player, "&cIncorrect Usage. Do /bwa setteamgen <name> <team>");
-                            }
-                        } else if (args[0].equalsIgnoreCase("setspawn")) {
-                            if (args.length > 1) {
-                                if (arenaManager.getArena(args[1]) != null) {
-                                    Arena a = arenaManager.getArena(args[1]);
-                                    Team team = null;
-                                    for (Team t : a.getTeams()) {
-                                        if (t.getName().equals(args[2])) {
-                                            team = t;
-                                        }
-                                    }
-                                    if (team == null) {
-                                        sendMessage(player, "Team named &6" + args[2] + "&e doesn't exist.");
-                                        return true;
-                                    }
-                                    Location playerLoc = player.getLocation();
-                                    team.setSpawn(playerLoc);
-                                    sendMessage(player, "Set team " + team.getColor() + team.getName() + "&e's spawn to &6x: " + playerLoc.getBlockX() + " y: " + playerLoc.getBlockY() + " z: " + playerLoc.getBlockZ() + "&e.");
-                                } else {
-
-                                    sendMessage(player, "Arena named &6" + args[1] + "&e doesn't exist.");
-                                }
-                            } else {
-                                sendMessage(player, "&cIncorrect Usage. Do /bwa setspawn <name> <team>");
-                            }
-                        } else if (args[0].equalsIgnoreCase("setbed")) {
-                            if (args.length > 2) {
-                                if (arenaManager.getArena(args[1]) != null) {
-                                    Arena a = arenaManager.getArena(args[1]);
-                                    Team team = null;
-                                    for (Team t : a.getTeams()) {
-                                        if (t.getName().equals(args[2])) {
-                                            team = t;
-                                        }
-                                    }
-                                    if (team == null) {
-                                        sendMessage(player, "Team named &6" + args[2] + "&e doesn't exist.");
-                                        return true;
-                                    }
-                                    if (!player.getTargetBlock(5).getType().toString().contains("_BED")) {
-                                        sendMessage(player, "You must target a bed block!");
-                                        return true;
-                                    }
-                                    Location playerLoc = player.getTargetBlock(5).getLocation();
-                                    team.setBed(playerLoc);
-                                    sendMessage(player, player.getTargetBlock(5).getType() + " set bed");
-                                    sendMessage(player, "Set team " + team.getColor() + team.getName() + "&e's bed to &6x: " + playerLoc.getBlockX() + " y: " + playerLoc.getBlockY() + " z: " + playerLoc.getBlockZ() + "&e.");
-                                } else {
-
-                                    sendMessage(player, "Arena named &6" + args[1] + "&e doesn't exist.");
-                                }
-                            } else {
-                                sendMessage(player, "&cIncorrect Usage. Do /bwa setbed <name> <team>");
-                            }
-                        } else if (args[0].equalsIgnoreCase("additemshop")) {
-                            Villager villager = (Villager) player.getLocation().getWorld().spawnEntity(player.getLocation(), EntityType.VILLAGER);
-                            villager.setAI(false);
-                            villager.setCustomName("§i");
-                            villager.setCustomNameVisible(false);
-                            ArmorStand as = (ArmorStand) player.getWorld().spawn(player.getLocation().subtract(0, 0.2, 0), ArmorStand.class);
-                            as.setVisible(false);
-                            as.setCustomName(ChatColor.GOLD + "" + ChatColor.BOLD + "RIGHT CLICK");
-                            as.setCustomNameVisible(true);
-                            as.setGravity(false);
-                            as.setCollidable(false);
-
-                            ArmorStand as1 = (ArmorStand) player.getWorld().spawn(player.getLocation().add(0, 0.1, 0), ArmorStand.class);
-                            as1.setVisible(false);
-                            as1.setCustomName(ChatColor.AQUA + "Item Shop");
-                            as1.setCustomNameVisible(true);
-                            as1.setGravity(false);
-                            as1.setCollidable(false);
-                        } else if (args[0].equalsIgnoreCase("addteamshop")) {
-                            Villager villager = (Villager) player.getLocation().getWorld().spawnEntity(player.getLocation(), EntityType.VILLAGER);
-                            villager.setAI(false);
-                            villager.setCustomName("§t");
-                            villager.setCustomNameVisible(false);
-                            ArmorStand as = (ArmorStand) player.getWorld().spawn(player.getLocation().subtract(0, 0.2, 0), ArmorStand.class);
-                            as.setVisible(false);
-                            as.setCustomName(ChatColor.GOLD + "" + ChatColor.BOLD + "RIGHT CLICK");
-                            as.setCustomNameVisible(true);
-                            as.setGravity(false);
-                            as.setCollidable(false);
-
-                            ArmorStand as1 = (ArmorStand) player.getWorld().spawn(player.getLocation().add(0, 0.1, 0), ArmorStand.class);
-                            as1.setVisible(false);
-                            as1.setCustomName(ChatColor.AQUA + "Team Upgrades");
-                            as1.setCustomNameVisible(true);
-                            as1.setGravity(false);
-                            as1.setCollidable(false);
-                        } else {
-                            sendMessage(player, "&cThat is not a command. Try /bwa help.");
-                        }
-                    } else {
+                if (args.length > 0) {
+                    if (args[0].equalsIgnoreCase("help")) {
                         sendMessage(player, false, help);
                     }
-                }else{
-                    sendMessage(player, "&cYou do not have permission!");
-                }
+                    else if (args[0].equalsIgnoreCase("create")) {
+                        CreateCommand cmd = new CreateCommand(player, args);
+                    }
+                    else if (args[0].equalsIgnoreCase("debug")) {
+                        if (arenaManager.getArenaList().size() > 0) {
+                            sendMessage(player, DebugUtils.generateDebug(arenaManager));
+                        } else {
+                            sendMessage(player, "There are no arenas to debug!");
+                        }
+                    }
+                    else if (args[0].equalsIgnoreCase("addteam")) {
+                        AddTeamCommand cmd = new AddTeamCommand(player, args);
+                    }
+                    else if (args[0].equalsIgnoreCase("save")) {
+                        SaveCommand cmd = new SaveCommand(player, args);
+                    }
+                    else if (args[0].equalsIgnoreCase("setlobby")) {
+                        SetLobbyCommand cmd = new SetLobbyCommand(player, args);
+                    }
+                    else if (args[0].equalsIgnoreCase("setmainlobby")) {
+                        SetMainLobbyCommand cmd = new SetMainLobbyCommand(player, args);
+                    }
+                    else if (args[0].equalsIgnoreCase("addgen")) {
+                        AddGenCommand cmd = new AddGenCommand(player, args);
+                    }
+                    else if (args[0].equalsIgnoreCase("setteamgen")) {
+                        SetTeamGenCommand cmd = new SetTeamGenCommand(player, args);
+                    }
+                    else if (args[0].equalsIgnoreCase("setspawn")) {
+                        SetSpawnCommand cmd = new SetSpawnCommand(player, args);
+                    }
+                    else if (args[0].equalsIgnoreCase("setbed")) {
+                        if (args.length > 2) {
+                            if (arenaManager.getArena(args[1]) != null) {
+                                Arena a = arenaManager.getArena(args[1]);
+                                Team team = null;
+                                for (Team t : a.getTeams()) {
+                                    if (t.getName().equals(args[2])) {
+                                        team = t;
+                                    }
+                                }
+                                if (team == null) {
+                                    sendMessage(player, "Team named &6" + args[2] + "&e doesn't exist.");
+                                    return true;
+                                }
+                                if (!player.getTargetBlock(5).getType().toString().contains("_BED")) {
+                                    sendMessage(player, "You must target a bed block!");
+                                    return true;
+                                }
+                                Location playerLoc = player.getTargetBlock(5).getLocation();
+                                team.setBed(playerLoc);
+                                sendMessage(player, player.getTargetBlock(5).getType() + " set bed");
+                                sendMessage(player, "Set team " + team.getColor() + team.getName() + "&e's bed to &6x: " + playerLoc.getBlockX() + " y: " + playerLoc.getBlockY() + " z: " + playerLoc.getBlockZ() + "&e.");
+                            } else {
 
+                                sendMessage(player, "Arena named &6" + args[1] + "&e doesn't exist.");
+                            }
+                        } else {
+                            sendMessage(player, "&cIncorrect Usage. Do /bwa setbed <name> <team>");
+                        }
+                    } else if (args[0].equalsIgnoreCase("additemshop")) {
+                        Villager villager = (Villager) player.getLocation().getWorld().spawnEntity(player.getLocation(), EntityType.VILLAGER);
+                        villager.setAI(false);
+                        villager.setCustomName("§i");
+                        villager.setCustomNameVisible(false);
+                        ArmorStand as = (ArmorStand) player.getWorld().spawn(player.getLocation().subtract(0, 0.2, 0), ArmorStand.class);
+                        as.setVisible(false);
+                        as.setCustomName(ChatColor.GOLD + "" + ChatColor.BOLD + "RIGHT CLICK");
+                        as.setCustomNameVisible(true);
+                        as.setGravity(false);
+                        as.setCollidable(false);
+
+                        ArmorStand as1 = (ArmorStand) player.getWorld().spawn(player.getLocation().add(0, 0.1, 0), ArmorStand.class);
+                        as1.setVisible(false);
+                        as1.setCustomName(ChatColor.AQUA + "Item Shop");
+                        as1.setCustomNameVisible(true);
+                        as1.setGravity(false);
+                        as1.setCollidable(false);
+                    } else if (args[0].equalsIgnoreCase("addteamshop")) {
+                        Villager villager = (Villager) player.getLocation().getWorld().spawnEntity(player.getLocation(), EntityType.VILLAGER);
+                        villager.setAI(false);
+                        villager.setCustomName("§t");
+                        villager.setCustomNameVisible(false);
+                        ArmorStand as = (ArmorStand) player.getWorld().spawn(player.getLocation().subtract(0, 0.2, 0), ArmorStand.class);
+                        as.setVisible(false);
+                        as.setCustomName(ChatColor.GOLD + "" + ChatColor.BOLD + "RIGHT CLICK");
+                        as.setCustomNameVisible(true);
+                        as.setGravity(false);
+                        as.setCollidable(false);
+
+                        ArmorStand as1 = (ArmorStand) player.getWorld().spawn(player.getLocation().add(0, 0.1, 0), ArmorStand.class);
+                        as1.setVisible(false);
+                        as1.setCustomName(ChatColor.AQUA + "Team Upgrades");
+                        as1.setCustomNameVisible(true);
+                        as1.setGravity(false);
+                        as1.setCollidable(false);
+                    } else {
+                        sendMessage(player, "&cThat is not a command. Try /bwa help.");
+                    }
+                } else {
+                    sendMessage(player, false, help);
+                }
             }
             if (label.equalsIgnoreCase("bw")) {
                 if (args.length > 0) {
@@ -412,15 +281,15 @@ public final class Bedwars extends JavaPlugin {
                         } else {
                             sendMessage(player, "&cYou are not in a game!");
                         }
-                    }else if (args[0].equalsIgnoreCase("play")) {
-                        for(Game game : gameManager.getGameList()){
-                            if(game.getState() == GameState.WAITING){
+                    } else if (args[0].equalsIgnoreCase("play")) {
+                        for (Game game : gameManager.getGameList()) {
+                            if (game.getState() == GameState.WAITING) {
                                 game.addPlayer(player);
                                 return true;
                             }
                         }
                         sendMessage(player, "&cSorry, there are no available games at this time.");
-                    }else{
+                    } else {
                         sendMessage(player, "&cInvalid command. Try /bw help.");
                     }
                 }
@@ -430,6 +299,16 @@ public final class Bedwars extends JavaPlugin {
             sender.sendMessage("This command can only be executed by a player!");
         }
         return true;
+    }
+
+    /* ---------- UTILS ----------- */
+    public static boolean isColor(String string) {
+        for (ChatColor c : ChatColor.values()) {
+            if (c.name().equalsIgnoreCase(string)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static void sendMessage(Player player, String msg) {
@@ -445,11 +324,6 @@ public final class Bedwars extends JavaPlugin {
             player.sendMessage(ChatColor.translateAlternateColorCodes('&', msg));
         }
     }
-
-    public static ArenaManager getArenaManager() {
-        return arenaManager;
-    }
-
 
     public static Color translateChatColorToColor(ChatColor chatColor) {
         switch (chatColor) {

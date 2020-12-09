@@ -15,7 +15,7 @@ public class AdminTabComplete implements TabCompleter {
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if(sender instanceof Player){
             Player player = (Player) sender;
-            if(player.hasPermission("bedwars.admin") && args.length==1){
+            if(args.length==1){
                     List<String> cmds = new ArrayList<>();
 
                     //Arena commands
@@ -54,9 +54,17 @@ public class AdminTabComplete implements TabCompleter {
                     if("debug".startsWith(args[0])){
                         cmds.add("debug");
                     }
+
+                    //Shop Commands
+                    if("additemshop".startsWith(args[0])){
+                        cmds.add("additemshop");
+                    }
+                    if("addteamshop".startsWith(args[0])){
+                        cmds.add("addteamshop");
+                    }
                     return cmds;
             }
-            if(player.hasPermission("bedwars.admin") && args.length==2){
+            if(args.length==2){
                 List<String> cmds = new ArrayList<>();
 
                 if(args[0].equalsIgnoreCase("setlobby") || args[0].equalsIgnoreCase("setmainlobby") || args[0].equalsIgnoreCase("addgen") || args[0].equalsIgnoreCase("addteam") || args[0].equalsIgnoreCase("setteamgen") || args[0].equalsIgnoreCase("setspawn") || args[0].equalsIgnoreCase("setbed")){
