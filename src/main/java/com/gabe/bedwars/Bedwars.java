@@ -150,61 +150,85 @@ public final class Bedwars extends JavaPlugin {
             if (label.equalsIgnoreCase("bwa")) {
                 if (args.length > 0) {
                     if (args[0].equalsIgnoreCase("help")) {
-                        sendMessage(player, false, help);
-                    }
-                    else if (args[0].equalsIgnoreCase("create")) {
-                        CreateCommand cmd = new CreateCommand(player, args);
-                    }
-                    else if (args[0].equalsIgnoreCase("debug")) {
-                        DebugCommand cmd = new DebugCommand(player, args);
-                    }
-                    else if (args[0].equalsIgnoreCase("addteam")) {
-                        AddTeamCommand cmd = new AddTeamCommand(player, args);
-                    }
-                    else if (args[0].equalsIgnoreCase("save")) {
-                        SaveCommand cmd = new SaveCommand(player, args);
-                    }
-                    else if (args[0].equalsIgnoreCase("setlobby")) {
-                        SetLobbyCommand cmd = new SetLobbyCommand(player, args);
-                    }
-                    else if (args[0].equalsIgnoreCase("setmainlobby")) {
-                        SetMainLobbyCommand cmd = new SetMainLobbyCommand(player, args);
-                    }
-                    else if (args[0].equalsIgnoreCase("addgen")) {
-                        AddGenCommand cmd = new AddGenCommand(player, args);
-                    }
-                    else if (args[0].equalsIgnoreCase("setteamgen")) {
-                        SetTeamGenCommand cmd = new SetTeamGenCommand(player, args);
-                    }
-                    else if (args[0].equalsIgnoreCase("setspawn")) {
-                        SetSpawnCommand cmd = new SetSpawnCommand(player, args);
-                    }
-                    else if (args[0].equalsIgnoreCase("setbed")) {
-                        SetBedCommand cmd = new SetBedCommand(player, args);
-                    }
-                    else if (args[0].equalsIgnoreCase("additemshop")) {
-                        AddItemShopCommand cmd = new AddItemShopCommand(player, args);
-                    }
-                    else if (args[0].equalsIgnoreCase("addteamshop")) {
-                        Villager villager = (Villager) player.getLocation().getWorld().spawnEntity(player.getLocation(), EntityType.VILLAGER);
-                        villager.setAI(false);
-                        villager.setCustomName("§t");
-                        villager.setCustomNameVisible(false);
-                        ArmorStand as = (ArmorStand) player.getWorld().spawn(player.getLocation().subtract(0, 0.2, 0), ArmorStand.class);
-                        as.setVisible(false);
-                        as.setCustomName(ChatColor.GOLD + "" + ChatColor.BOLD + "RIGHT CLICK");
-                        as.setCustomNameVisible(true);
-                        as.setGravity(false);
-                        as.setCollidable(false);
+                        if(player.hasPermission("bedwarsplus.admin.help")) {
+                            sendMessage(player, false, help);
+                        }else {
+                            sendMessage(player, "&cYou do not have permission!");
+                        }
 
-                        ArmorStand as1 = (ArmorStand) player.getWorld().spawn(player.getLocation().add(0, 0.1, 0), ArmorStand.class);
-                        as1.setVisible(false);
-                        as1.setCustomName(ChatColor.AQUA + "Team Upgrades");
-                        as1.setCustomNameVisible(true);
-                        as1.setGravity(false);
-                        as1.setCollidable(false);
-                    }
-                    else {
+                    } else if (args[0].equalsIgnoreCase("create")) {
+                        if (player.hasPermission("bedwarsplus.admin.create")) {
+                            CreateCommand cmd = new CreateCommand(player, args);
+                        } else {
+                            sendMessage(player, "&cYou do not have permission!");
+                        }
+                    } else if (args[0].equalsIgnoreCase("debug")) {
+                        if (player.hasPermission("bedwarsplus.admin.debug")) {
+                            DebugCommand cmd = new DebugCommand(player, args);
+                        } else {
+                            sendMessage(player, "&cYou do not have permission!");
+                        }
+                    } else if (args[0].equalsIgnoreCase("addteam")) {
+                        if (player.hasPermission("bedwarsplus.admin.configure")) {
+                            AddTeamCommand cmd = new AddTeamCommand(player, args);
+                        } else {
+                            sendMessage(player, "&cYou do not have permission!");
+                        }
+                    } else if (args[0].equalsIgnoreCase("save")) {
+                        if (player.hasPermission("bedwarsplus.admin.save")) {
+                            SaveCommand cmd = new SaveCommand(player, args);
+                        } else {
+                            sendMessage(player, "&cYou do not have permission!");
+                        }
+                    } else if (args[0].equalsIgnoreCase("setlobby")) {
+                        if (player.hasPermission("bedwarsplus.admin.configure")) {
+                            SetLobbyCommand cmd = new SetLobbyCommand(player, args);
+                        } else {
+                            sendMessage(player, "&cYou do not have permission!");
+                        }
+                    } else if (args[0].equalsIgnoreCase("setmainlobby")) {
+                        if (player.hasPermission("bedwarsplus.admin.configure")) {
+                            SetMainLobbyCommand cmd = new SetMainLobbyCommand(player, args);
+                        } else {
+                            sendMessage(player, "&cYou do not have permission!");
+                        }
+                    } else if (args[0].equalsIgnoreCase("addgen")) {
+                        if (player.hasPermission("bedwarsplus.admin.configure")) {
+                            AddGenCommand cmd = new AddGenCommand(player, args);
+                        } else {
+                            sendMessage(player, "&cYou do not have permission!");
+                        }
+                    } else if (args[0].equalsIgnoreCase("setteamgen")) {
+                        if (player.hasPermission("bedwarsplus.admin.configure")) {
+                            SetTeamGenCommand cmd = new SetTeamGenCommand(player, args);
+                        } else {
+                            sendMessage(player, "&cYou do not have permission!");
+                        }
+                    } else if (args[0].equalsIgnoreCase("setspawn")) {
+                        if (player.hasPermission("bedwarsplus.admin.configure")) {
+                            SetSpawnCommand cmd = new SetSpawnCommand(player, args);
+                        } else {
+                            sendMessage(player, "&cYou do not have permission!");
+                        }
+                    } else if (args[0].equalsIgnoreCase("setbed")) {
+                        if (player.hasPermission("bedwarsplus.admin.configure")) {
+                            SetBedCommand cmd = new SetBedCommand(player, args);
+                        } else {
+                            sendMessage(player, "&cYou do not have permission!");
+                        }
+                    } else if (args[0].equalsIgnoreCase("additemshop")) {
+                        if (player.hasPermission("bedwarsplus.admin.shop")) {
+                            AddItemShopCommand cmd = new AddItemShopCommand(player, args);
+                        } else {
+                            sendMessage(player, "&cYou do not have permission!");
+                        }
+                    } else if (args[0].equalsIgnoreCase("addteamshop")) {
+                        if (player.hasPermission("bedwarsplus.admin.shop")) {
+                            AddTeamShopCommand cmd = new AddTeamShopCommand(player, args);
+                        } else {
+                            sendMessage(player, "&cYou do not have permission!");
+                        }
+                    } else {
                         sendMessage(player, "&cThat is not a command. Try /bwa help.");
                     }
                 } else {
@@ -233,8 +257,7 @@ public final class Bedwars extends JavaPlugin {
                         } else {
                             player.sendMessage("&cYou do not have permission to do that.");
                         }
-                    }
-                    else if (args[0].equalsIgnoreCase("leave")) {
+                    } else if (args[0].equalsIgnoreCase("leave")) {
                         if (player.hasPermission("bedwarspro.player.leave")) {
                             if (gameManager.getGame(player) != null) {
                                 sendMessage(player, "Left arena " + gameManager.getGame(player).getName() + "!");
@@ -246,10 +269,9 @@ public final class Bedwars extends JavaPlugin {
                         } else {
                             player.sendMessage("&cYou do not have permission to do that.");
                         }
-                    }
-                    else if (args[0].equalsIgnoreCase("play")) {
+                    } else if (args[0].equalsIgnoreCase("play")) {
                         if (player.hasPermission("bedwarspro.player.play")) {
-                            if(gameManager.getGame(player) == null){
+                            if (gameManager.getGame(player) == null) {
                                 sendMessage(player, "&cYou are currently in a game!");
                                 return true;
                             }
@@ -263,8 +285,7 @@ public final class Bedwars extends JavaPlugin {
                         } else {
                             player.sendMessage("&cYou do not have permission to do that.");
                         }
-                    }
-                    else {
+                    } else {
                         sendMessage(player, "&cInvalid command. Try /bw help.");
                     }
                 }
