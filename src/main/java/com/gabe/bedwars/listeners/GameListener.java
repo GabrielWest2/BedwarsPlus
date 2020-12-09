@@ -1,10 +1,7 @@
 package com.gabe.bedwars.listeners;
 
 import com.gabe.bedwars.Bedwars;
-import com.gabe.bedwars.api.events.BWBreakBedEvent;
-import com.gabe.bedwars.api.events.BWGameStateSwitchEvent;
-import com.gabe.bedwars.api.events.BWJoinGameEvent;
-import com.gabe.bedwars.api.events.BWLeaveGameEvent;
+import com.gabe.bedwars.events.BWBreakBedEvent;
 import com.gabe.bedwars.managers.GameManager;
 import com.gabe.bedwars.GameState;
 import com.gabe.bedwars.arenas.Game;
@@ -357,7 +354,4 @@ public class GameListener implements Listener {
             event.setCancelled(true);
         }
     }
-
-
-
 }
