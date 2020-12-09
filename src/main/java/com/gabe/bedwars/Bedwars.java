@@ -156,11 +156,7 @@ public final class Bedwars extends JavaPlugin {
                         CreateCommand cmd = new CreateCommand(player, args);
                     }
                     else if (args[0].equalsIgnoreCase("debug")) {
-                        if (arenaManager.getArenaList().size() > 0) {
-                            sendMessage(player, DebugUtils.generateDebug(arenaManager));
-                        } else {
-                            sendMessage(player, "There are no arenas to debug!");
-                        }
+                        DebugCommand cmd = new DebugCommand(player, args);
                     }
                     else if (args[0].equalsIgnoreCase("addteam")) {
                         AddTeamCommand cmd = new AddTeamCommand(player, args);
@@ -184,53 +180,12 @@ public final class Bedwars extends JavaPlugin {
                         SetSpawnCommand cmd = new SetSpawnCommand(player, args);
                     }
                     else if (args[0].equalsIgnoreCase("setbed")) {
-                        if (args.length > 2) {
-                            if (arenaManager.getArena(args[1]) != null) {
-                                Arena a = arenaManager.getArena(args[1]);
-                                Team team = null;
-                                for (Team t : a.getTeams()) {
-                                    if (t.getName().equals(args[2])) {
-                                        team = t;
-                                    }
-                                }
-                                if (team == null) {
-                                    sendMessage(player, "Team named &6" + args[2] + "&e doesn't exist.");
-                                    return true;
-                                }
-                                if (!player.getTargetBlock(5).getType().toString().contains("_BED")) {
-                                    sendMessage(player, "You must target a bed block!");
-                                    return true;
-                                }
-                                Location playerLoc = player.getTargetBlock(5).getLocation();
-                                team.setBed(playerLoc);
-                                sendMessage(player, player.getTargetBlock(5).getType() + " set bed");
-                                sendMessage(player, "Set team " + team.getColor() + team.getName() + "&e's bed to &6x: " + playerLoc.getBlockX() + " y: " + playerLoc.getBlockY() + " z: " + playerLoc.getBlockZ() + "&e.");
-                            } else {
-
-                                sendMessage(player, "Arena named &6" + args[1] + "&e doesn't exist.");
-                            }
-                        } else {
-                            sendMessage(player, "&cIncorrect Usage. Do /bwa setbed <name> <team>");
-                        }
-                    } else if (args[0].equalsIgnoreCase("additemshop")) {
-                        Villager villager = (Villager) player.getLocation().getWorld().spawnEntity(player.getLocation(), EntityType.VILLAGER);
-                        villager.setAI(false);
-                        villager.setCustomName("§i");
-                        villager.setCustomNameVisible(false);
-                        ArmorStand as = (ArmorStand) player.getWorld().spawn(player.getLocation().subtract(0, 0.2, 0), ArmorStand.class);
-                        as.setVisible(false);
-                        as.setCustomName(ChatColor.GOLD + "" + ChatColor.BOLD + "RIGHT CLICK");
-                        as.setCustomNameVisible(true);
-                        as.setGravity(false);
-                        as.setCollidable(false);
-
-                        ArmorStand as1 = (ArmorStand) player.getWorld().spawn(player.getLocation().add(0, 0.1, 0), ArmorStand.class);
-                        as1.setVisible(false);
-                        as1.setCustomName(ChatColor.AQUA + "Item Shop");
-                        as1.setCustomNameVisible(true);
-                        as1.setGravity(false);
-                        as1.setCollidable(false);
-                    } else if (args[0].equalsIgnoreCase("addteamshop")) {
+                        SetBedCommand cmd = new SetBedCommand(player, args);
+                    }
+                    else if (args[0].equalsIgnoreCase("additemshop")) {
+                        AddItemShopCommand cmd = new AddItemShopCommand(player, args);
+                    }
+                    else if (args[0].equalsIgnoreCase("addteamshop")) {
                         Villager villager = (Villager) player.getLocation().getWorld().spawnEntity(player.getLocation(), EntityType.VILLAGER);
                         villager.setAI(false);
                         villager.setCustomName("§t");
@@ -248,7 +203,8 @@ public final class Bedwars extends JavaPlugin {
                         as1.setCustomNameVisible(true);
                         as1.setGravity(false);
                         as1.setCollidable(false);
-                    } else {
+                    }
+                    else {
                         sendMessage(player, "&cThat is not a command. Try /bwa help.");
                     }
                 } else {
@@ -258,38 +214,57 @@ public final class Bedwars extends JavaPlugin {
             if (label.equalsIgnoreCase("bw")) {
                 if (args.length > 0) {
                     if (args[0].equalsIgnoreCase("join")) {
-                        if (args.length > 1) {
-                            if (gameManager.getGame(args[1]) != null) {
-                                if (gameManager.getGame(args[1]).getPlayers().contains(player)) {
-                                    sendMessage(player, "&cYou are already in this game!");
-                                    return true;
+                        if (player.hasPermission("bedwarspro.player.join")) {
+                            if (args.length > 1) {
+                                if (gameManager.getGame(args[1]) != null) {
+                                    if (gameManager.getGame(args[1]).getPlayers().contains(player)) {
+                                        sendMessage(player, "&cYou are already in this game!");
+                                        return true;
+                                    }
+                                    sendMessage(player, "Joined arena named &6" + args[1] + "&e.");
+                                    gameManager.getGame(args[1]).addPlayer(player);
+
+                                } else {
+                                    sendMessage(player, "Arena named &6" + args[1] + "&e doesn't exists.");
                                 }
-                                sendMessage(player, "Joined arena named &6" + args[1] + "&e.");
-                                gameManager.getGame(args[1]).addPlayer(player);
+                            } else {
+                                sendMessage(player, "&cIncorrect Usage. Do /bw join <name> ");
+                            }
+                        } else {
+                            player.sendMessage("&cYou do not have permission to do that.");
+                        }
+                    }
+                    else if (args[0].equalsIgnoreCase("leave")) {
+                        if (player.hasPermission("bedwarspro.player.leave")) {
+                            if (gameManager.getGame(player) != null) {
+                                sendMessage(player, "Left arena " + gameManager.getGame(player).getName() + "!");
+                                gameManager.getGame(player).removePlayer(player);
 
                             } else {
-                                sendMessage(player, "Arena named &6" + args[1] + "&e doesn't exists.");
+                                sendMessage(player, "&cYou are not in a game!");
                             }
                         } else {
-                            sendMessage(player, "&cIncorrect Usage. Do /bw join <name> ");
+                            player.sendMessage("&cYou do not have permission to do that.");
                         }
-                    } else if (args[0].equalsIgnoreCase("leave")) {
-                        if (gameManager.getGame(player) != null) {
-                            sendMessage(player, "Left arena " + gameManager.getGame(player).getName() + "!");
-                            gameManager.getGame(player).removePlayer(player);
-
-                        } else {
-                            sendMessage(player, "&cYou are not in a game!");
-                        }
-                    } else if (args[0].equalsIgnoreCase("play")) {
-                        for (Game game : gameManager.getGameList()) {
-                            if (game.getState() == GameState.WAITING) {
-                                game.addPlayer(player);
+                    }
+                    else if (args[0].equalsIgnoreCase("play")) {
+                        if (player.hasPermission("bedwarspro.player.play")) {
+                            if(gameManager.getGame(player) == null){
+                                sendMessage(player, "&cYou are currently in a game!");
                                 return true;
                             }
+                            for (Game game : gameManager.getGameList()) {
+                                if (game.getState() == GameState.WAITING) {
+                                    game.addPlayer(player);
+                                    return true;
+                                }
+                            }
+                            sendMessage(player, "&cSorry, there are no available games at this time.");
+                        } else {
+                            player.sendMessage("&cYou do not have permission to do that.");
                         }
-                        sendMessage(player, "&cSorry, there are no available games at this time.");
-                    } else {
+                    }
+                    else {
                         sendMessage(player, "&cInvalid command. Try /bw help.");
                     }
                 }
