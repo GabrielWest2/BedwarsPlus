@@ -8,6 +8,7 @@ import com.gabe.bedwars.listeners.UpgradeListener;
 import com.gabe.bedwars.managers.ArenaManager;
 import com.gabe.bedwars.managers.GameManager;
 import com.gabe.bedwars.shop.ShopCreator;
+import com.gabe.bedwars.stats.StatsManager;
 import com.gabe.bedwars.tabcomplete.AdminTabComplete;
 import com.gabe.bedwars.upgrade.UpgradeCreator;
 import org.bukkit.Bukkit;
@@ -30,6 +31,7 @@ public final class Bedwars extends JavaPlugin {
     private static GameManager gameManager;
     public static ShopCreator shopCreator;
     public static UpgradeCreator upgradeCreator;
+    private static StatsManager statsManager;
     /* ---------- DEFAULT CONFIG VALUES ----------- */
     public static String serverText = "yourserver.net";
     public static String prefix = "&8[&6BW&8] &8> &e";
@@ -69,13 +71,19 @@ public final class Bedwars extends JavaPlugin {
         return arenaManager;
     }
 
+    public static StatsManager getStatsManager() {return statsManager; }
+
     /* ---------- OVERRIDE ----------- */
     public void onEnable() {
+        while (!this.isEnabled()){
+
+        }
         saveConfig();
         getCommand("bwa").setTabCompleter(new AdminTabComplete());
         arenaManager = new ArenaManager(this);
         arenaManager.deserialize();
         gameManager = new GameManager(this);
+        statsManager = new StatsManager(this);
         shopCreator = new ShopCreator();
         upgradeCreator = new UpgradeCreator();
         Bukkit.getPluginManager().registerEvents(new GameListener(), this);
@@ -232,6 +240,7 @@ public final class Bedwars extends JavaPlugin {
             if (label.equalsIgnoreCase("bw")) {
                 if (args.length > 0) {
                     if (args[0].equalsIgnoreCase("join")) {
+                        statsManager.createFile(player);
                         if (player.hasPermission("bedwarspro.player.join")) {
                             if (args.length > 1) {
                                 if (gameManager.getGame(args[1]) != null) {
