@@ -54,6 +54,9 @@ public class AdminTabComplete implements TabCompleter {
                     if("debug".startsWith(args[0])){
                         cmds.add("debug");
                     }
+                    if("reload".startsWith(args[0])){
+                        cmds.add("reload");
+                    }
 
                     //Shop Commands
                     if("additemshop".startsWith(args[0])){

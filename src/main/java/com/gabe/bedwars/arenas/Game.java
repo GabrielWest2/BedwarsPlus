@@ -2,7 +2,7 @@ package com.gabe.bedwars.arenas;
 
 import com.gabe.bedwars.Bedwars;
 import com.gabe.bedwars.GameState;
-import com.gabe.bedwars.ScoreboardFactoryUtils;
+import com.gabe.bedwars.ScoreboardFactory;
 import com.gabe.bedwars.events.BWGameStateSwitchEvent;
 import com.gabe.bedwars.events.BWJoinGameEvent;
 import com.gabe.bedwars.events.BWLeaveGameEvent;
@@ -12,6 +12,8 @@ import com.gabe.bedwars.managers.NameManager;
 import com.gabe.bedwars.managers.TeamUpgradesManager;
 import com.gabe.bedwars.team.GameTeam;
 import com.gabe.bedwars.team.Team;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarFlag;
@@ -47,6 +49,7 @@ public class Game {
     private final Bedwars plugin;
     private int timer = -1;
     private Set<Player> players;
+    private Set<Player> playersToRemove;
     private Set<GameTeam> teams;
     private GameState state;
     private boolean spawnDiamond = false;
@@ -66,6 +69,7 @@ public class Game {
         this.arena = arena;
         this.plugin = plugin;
         this.players = new HashSet<>();
+        this.playersToRemove = new HashSet<>();
         this.teams = new HashSet<>();
         this.dlables = new HashSet<>();
         this.elables = new HashSet<>();
@@ -163,6 +167,10 @@ public class Game {
                         if (i >= titles.size()) {
                             i = 0;
                         }
+                    }
+                    for(Player player : playersToRemove){
+                        bossBar.removePlayer(player);
+                        playersToRemove.remove(player);
                     }
                 } else {
                     bossBar.setVisible(false);
@@ -565,7 +573,7 @@ public class Game {
         broadcastWithoutPrefix("&f&lBED DESTRUCTION > " + team.getColor() + team.getName() + "'s &cbed was destroyed by " + player.getName() + "!");
         for (Player p : team.getPlayers()) {
             p.sendTitle(ChatColor.translateAlternateColorCodes('&', "&cBED DESTROYED"), "", 1, 60, 1);
-            p.playSound(player.getLocation(), Sound.ENTITY_ENDER_DRAGON_DEATH, 1, 1);
+            p.playSound(player.getLocation(), Sound.ENTITY_WITHER_DEATH, 1, 1);
         }
         updateScoreboards();
     }
@@ -592,7 +600,8 @@ public class Game {
                     } else {
                         Bedwars.sendMessage(player, "&cNo lobby has been set!");
                     }
-                    broadcast(player.getName() + " has joined the game! &6(" + players.size() + "/" + arena.getMinPlayers() + ")");
+                    Bukkit.getLogger().info(player.getPlayerListName());
+                    broadcast(player.getPlayerListName() + " has joined the game! &6(" + players.size() + "/" + arena.getMinPlayers() + ")");
                     if (players.size() >= arena.getMinPlayers()) {
                         hasPlayers = true;
                         if (timer == -1) {
@@ -607,9 +616,12 @@ public class Game {
     }
 
     public void removePlayer(Player player) {
+
+
         BWLeaveGameEvent event = new BWLeaveGameEvent(this, player);
         callEvent(event);
         if(!event.isCancelled()) {
+            playersToRemove.add(player);
             players.remove(player);
             for (GameTeam t : teams) {
                 if (t.getPlayers().contains(player)) {
@@ -620,6 +632,7 @@ public class Game {
                 hasPlayers = false;
             }
             statsManager.removePlayer(player);
+            Bedwars.getStatsManager().lostGame(player);
             arena.getMainLobbyLocation().getWorld().loadChunk(arena.getMainLobbyLocation().getChunk());
             player.teleport(arena.getMainLobbyLocation());
             broadcast(player.getName() + " has left the game! &6(" + players.size() + "/" + arena.getMinPlayers() + ")");
@@ -641,16 +654,16 @@ public class Game {
     }
 
     public void broadcast(String msg) {
-        String message = Bedwars.prefix + msg;
+        String message = msg;
         for (Player p : players) {
-            p.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
+            Bedwars.sendMessage(p, message);
         }
     }
 
     public void broadcastWithoutPrefix(String msg) {
         String message = msg;
         for (Player p : players) {
-            p.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
+            Bedwars.sendMessage(p, false, message);
         }
     }
 
@@ -710,10 +723,12 @@ public class Game {
         }
         for(Player player : players){
             if(team.getPlayers().contains(player)){
-                player.sendTitle(ChatColor.translateAlternateColorCodes('&',"&6&lVictory"), "", 20, 60, 20);
+                Bedwars.getStatsManager().wonGame(player);
+                player.sendTitle(ChatColor.translateAlternateColorCodes('&',"&6&lVictory"), ChatColor.GRAY+"You won!", 20, 60, 20);
                 player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 1);
             }else{
-                player.sendTitle(ChatColor.translateAlternateColorCodes('&',"&c&lGAME OVER"), "", 20, 60, 20);
+                Bedwars.getStatsManager().lostGame(player);
+                player.sendTitle(ChatColor.translateAlternateColorCodes('&',"&c&lGAME OVER"), team.getColor()+""+ChatColor.BOLD+team.getName()+" "+ChatColor.GRAY+"has won the game!", 20, 60, 20);
                 player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 1);
             }
         }
@@ -724,13 +739,17 @@ public class Game {
                     state = GameState.RESSETING;
                 reset();
             }
+            /*
+            * TODO
+            * Add a config option for the win-end game delay
+            */
         }.runTaskLater(plugin, 5*20L);
 
     }
 
     public void updateScoreboards() {
         for (Player player : players) {
-            player.setScoreboard(ScoreboardFactoryUtils.makeBoard(player, state, this));
+            player.setScoreboard(ScoreboardFactory.makeBoard(player, state, this));
         }
     }
 
@@ -785,7 +804,8 @@ public class Game {
         return true;
     }
 
-    public void reset() {
+    public void reset()
+    {
         blockManager.restoreMap();
         for (ArmorStand stand : dlables) {
             stand.remove();
@@ -816,6 +836,9 @@ public class Game {
                     entity.remove();
                 } else if (entity instanceof ArmorStand) {
                     ArmorStand as = (ArmorStand) entity;
+                    if(as.getCustomName() == null){
+                        continue;
+                    }
                     if (as.getCustomName().contains("Diamond") || as.getCustomName().contains("Spawns in") || as.getCustomName().contains("Emerald")) {
                         as.remove();
                         entity.remove();

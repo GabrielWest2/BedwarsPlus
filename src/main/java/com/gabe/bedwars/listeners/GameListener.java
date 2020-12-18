@@ -7,10 +7,7 @@ import com.gabe.bedwars.GameState;
 import com.gabe.bedwars.arenas.Game;
 import com.gabe.bedwars.shop.ShopPage;
 import com.gabe.bedwars.team.GameTeam;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -93,6 +90,7 @@ public class GameListener implements Listener {
                                 game.callEvent(e);
                                 if(!e.isCancelled()) {
                                     game.playerBrokeBed(player, team);
+                                    Bedwars.getStatsManager().gotBed(player);
                                 }
                             } else {
                                 Bedwars.sendMessage(player, "&cYou cant break your own bed!");
@@ -194,6 +192,8 @@ public class GameListener implements Listener {
         Player player = event.getPlayer();
         if (!(entity instanceof NPC))
             return;
+        if(entity.getCustomName() == null)
+            return;
 
         if (entity.getCustomName().contains("i")) {
             event.setCancelled(true);
@@ -236,6 +236,11 @@ public class GameListener implements Listener {
                 if (player.getKiller() != null) {
                     Player attacker = player.getKiller();
                     game.playerDied(event.getEntity(), "was murdered by " + game.getTeam(attacker).getColor() + attacker.getName());
+                    if(game.getTeam(player).hasBed()){
+                        Bedwars.getStatsManager().gotKill(attacker);
+                    }else{
+                        Bedwars.getStatsManager().gotFinalKill(attacker);
+                    }
                     for (ItemStack i : player.getInventory()) {
                         if (i != null) {
                             if (i.getType() == Material.IRON_INGOT || i.getType() == Material.GOLD_INGOT || i.getType() == Material.EMERALD || i.getType() == Material.DIAMOND) {
@@ -256,6 +261,11 @@ public class GameListener implements Listener {
 
                 } else {
                     game.playerDied(event.getEntity(), "died");
+                    for (ItemStack i : player.getInventory()) {
+                        if (i != null) {
+                            player.getInventory().remove(i);
+                        }
+                    }
                 }
                 game.updateScoreboards();
                 return;
@@ -353,5 +363,29 @@ public class GameListener implements Listener {
         if (game != null) {
             event.setCancelled(true);
         }
+    }
+
+    @EventHandler
+    public void onPlayerChat(AsyncPlayerChatEvent event) {
+        Player player = event.getPlayer();
+        Game game = gameManager.getGame(player);
+        if(game != null){
+            if(game.getState() == GameState.PLAYING){
+                GameTeam team = game.getTeam(player);
+                if(team == null)
+                    return;
+
+                event.setCancelled(true);
+                for(Player p : team.getPlayers()){
+                    Bedwars.sendMessage(p, team.getColor()+"["+team.getName().toUpperCase()+"] "+ ChatColor.GOLD+player.getName() + ": "+ChatColor.WHITE+event.getMessage());
+                }
+            }else{
+                event.setCancelled(true);
+                for(Player p : game.getPlayers()){
+                    Bedwars.sendMessage(p, player.getDisplayName() + ": "+ChatColor.WHITE+event.getMessage());
+                }
+            }
+        }
+
     }
 }
