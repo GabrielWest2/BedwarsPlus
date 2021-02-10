@@ -81,6 +81,7 @@ public class Game {
         //Start coroutines
         foodCheck();
         endCheck();
+        armorCheck();
         //Start generators
         teamGens();
         emeraldGens();
@@ -247,8 +248,8 @@ public class Game {
     }
 
     public void diamondArmorStands() {
-        for (Location loc : arena.getDiamondGens()) {
-            loc.clone().add(0.5, 0.5, 0.5);
+        for (Location locd : arena.getDiamondGens()) {
+            Location loc = locd.clone().add(0.5, 0.5, 0.5);
             ArmorStand as = (ArmorStand) loc.getWorld().spawnEntity(loc, EntityType.ARMOR_STAND);
             as.setGravity(false);
             as.setVisible(false);
@@ -283,8 +284,8 @@ public class Game {
     }
 
     public void emeraldArmorStands() {
-        for (Location loc : arena.getEmeraldGens()) {
-            loc.clone().add(0.5, 0.5, 0.5);
+        for (Location loce : arena.getEmeraldGens()) {
+            Location loc = loce.clone().add(0.5, 0.5, 0.5);
             ArmorStand as = (ArmorStand) loc.getWorld().spawnEntity(loc, EntityType.ARMOR_STAND);
             as.setGravity(false);
             as.setVisible(false);
@@ -439,6 +440,40 @@ public class Game {
         }.runTaskTimer(plugin, 0L, 20L);
     }
 
+    public void armorCheck() {
+        new BukkitRunnable() {
+            public void run() {
+                for (Player player : players) {
+                    ItemStack helm = player.getEquipment().getHelmet();
+                    if(helm != null){
+                        helm.setDurability((short) 0);
+                    }
+                    player.getEquipment().setHelmet(helm);
+
+                    ItemStack chest = player.getEquipment().getChestplate();
+                    if(chest != null){
+                        chest.setDurability((short) 0);
+                    }
+                    player.getEquipment().setChestplate(chest);
+
+                    ItemStack legs = player.getEquipment().getLeggings();
+                    if(legs != null){
+                        legs.setDurability((short) 0);
+                    }
+                    player.getEquipment().setLeggings(legs);
+
+                    ItemStack boots = player.getEquipment().getBoots();
+                    if(boots != null){
+                        boots.setDurability((short) 0);
+                    }
+                    player.getEquipment().setBoots(boots);
+                }
+
+                //Use cancel(); if you want to close this repeating task.
+            }
+        }.runTaskTimer(plugin, 0L, 20L);
+    }
+
     public void deathCountDown(Player player, GameTeam team) {
 
         new BukkitRunnable() {
@@ -507,8 +542,8 @@ public class Game {
     }
 
     public void spinArmorStands() {
-        for (Location loc : arena.getDiamondGens()) {
-            loc.add(0.5, 0.5, 0.5);
+        for (Location locd : arena.getDiamondGens()) {
+            Location loc = locd.clone().add(0.5, 0.5, 0.5);
             ArmorStand as = (ArmorStand) loc.getWorld().spawnEntity(loc, EntityType.ARMOR_STAND);
             as.setGravity(false);
             as.setVisible(false);
@@ -525,8 +560,8 @@ public class Game {
             }.runTaskTimer(plugin, 0, 3);
         }
 
-        for (Location loc : arena.getEmeraldGens()) {
-            loc.add(0.5, 0.5, 0.5);
+        for (Location loce : arena.getEmeraldGens()) {
+            Location loc = loce.clone().add(0.5, 0.5, 0.5);
             ArmorStand as = (ArmorStand) loc.getWorld().spawnEntity(loc, EntityType.ARMOR_STAND);
             as.setGravity(false);
             as.setVisible(false);
@@ -592,6 +627,8 @@ public class Game {
                     player.getActivePotionEffects().clear();
                     player.getInventory().clear();
                     player.getInventory().setItem(8, getLeaveItem());
+                    player.setHealth(20);
+                    player.setGameMode(GameMode.SURVIVAL);
                     updateScoreboards();
 
                     if (arena.getLobbyLocation() != null) {
@@ -854,7 +891,7 @@ public class Game {
         }
     }
 
-    public  <e extends Event> void callEvent(e event){
+    public  static <e extends Event> void callEvent(e event){
         Bukkit.getServer().getPluginManager().callEvent(event);
     }
 }

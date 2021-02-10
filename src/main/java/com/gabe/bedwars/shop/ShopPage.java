@@ -18,7 +18,8 @@ public enum ShopPage {
     WEAPONS(2, Material.GOLDEN_SWORD, Arrays.asList(
             new ShopItem(Material.STONE_SWORD,10,1,"choop.", MoneyType.IRON),
             new ShopItem(Material.IRON_SWORD,7,1,"CHOOP CHOOP!", MoneyType.GOLD),
-            new ShopItem(Material.DIAMOND_SWORD,3,1,"CHOOPEDYEDY!", MoneyType.EMERALD)
+            new ShopItem(Material.DIAMOND_SWORD,3,1,"CHOOPEDYEDY!", MoneyType.EMERALD),
+            new ShopItem(Material.STICK,5,1,"It a plane! Its a knoko-back stick.", MoneyType.GOLD)
     )),
     ARMOR(3,Material.CHAINMAIL_BOOTS,  Arrays.asList(
             new ShopItem(Material.CHAINMAIL_BOOTS,40,1,"Permanent chainmail armor.", MoneyType.IRON),

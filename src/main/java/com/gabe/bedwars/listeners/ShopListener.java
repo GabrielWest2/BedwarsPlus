@@ -1,15 +1,20 @@
 package com.gabe.bedwars.listeners;
 
 import com.gabe.bedwars.Bedwars;
+import com.gabe.bedwars.arenas.Game;
+import com.gabe.bedwars.events.BWPlayerBuyItemEvent;
 import com.gabe.bedwars.shop.ShopPage;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -49,6 +54,21 @@ public class ShopListener implements Listener {
 
         if(isItem(click)){
             if(player.getInventory().containsAtLeast(getMat(click), getCost(click))) {
+                Inventory inv = player.getOpenInventory().getTopInventory();
+                ShopPage page = ShopPage.BLOCKS;
+                if(inv.getItem(10).getType() == Material.LIME_STAINED_GLASS_PANE){ page = ShopPage.BLOCKS; }
+                if(inv.getItem(11).getType() == Material.LIME_STAINED_GLASS_PANE){ page = ShopPage.WEAPONS; }
+                if(inv.getItem(12).getType() == Material.LIME_STAINED_GLASS_PANE){ page = ShopPage.ARMOR; }
+                if(inv.getItem(13).getType() == Material.LIME_STAINED_GLASS_PANE){ page = ShopPage.TOOLS; }
+                if(inv.getItem(14).getType() == Material.LIME_STAINED_GLASS_PANE){ page = ShopPage.RANGED; }
+                if(inv.getItem(15).getType() == Material.LIME_STAINED_GLASS_PANE){ page = ShopPage.POTIONS; }
+                if(inv.getItem(16).getType() == Material.LIME_STAINED_GLASS_PANE){ page = ShopPage.UTILITY; }
+
+                BWPlayerBuyItemEvent e = new BWPlayerBuyItemEvent(player, click, page);
+                Game.callEvent(e);
+
+                if(!e.isCancelled()) {
+
                 for(int i = 0; i<getCost(click);i++) {
                     player.getInventory().removeItem(getMat(click));
                 }
@@ -63,14 +83,27 @@ public class ShopListener implements Listener {
                             if(click.getItemMeta().getDisplayName().contains("Speed Boost")){
                                 player.getInventory().addItem(getSpeed());
                             }else {
-                                player.getInventory().addItem(new ItemStack(click.getType(), click.getAmount()));
+                                if(click.getItemMeta().getDisplayName().contains("White wool")){
+                                    player.getInventory().addItem(new ItemStack(Bedwars.translateChatColorToWool(Bedwars.getGameManager().getGame(player).getTeam(player).getColor()), click.getAmount()));
+                                }else {
+                                    if(click.getItemMeta().getDisplayName().contains("Stick")){
+                                        ItemStack stick = new ItemStack(Material.STICK);
+                                        ItemMeta im = stick.getItemMeta();
+                                        im.setDisplayName("Knockback Stick");
+                                        stick.setItemMeta(im);
+                                        stick.addUnsafeEnchantment(Enchantment.KNOCKBACK, 1);
+                                        player.getInventory().addItem(stick);
+                                    }else {
+                                        player.getInventory().addItem(new ItemStack(click.getType(), click.getAmount()));
+                                    }
+                                }
                             }
                         }
                     }
 
                 }else{
                     if(click.getType().toString().contains("MAIL")){
-                        player.getEquipment().setLeggings(new ItemStack(Material.CHAINMAIL_LEGGINGS));
+                        player.getEquipment().setLeggings(new ItemStack(Material.CHAINMAIL_LEGGINGS) );
                         player.getEquipment().setBoots(new ItemStack(Material.CHAINMAIL_BOOTS));
                     }
                     if(click.getType().toString().contains("IRON")){
@@ -81,6 +114,7 @@ public class ShopListener implements Listener {
                         player.getEquipment().setLeggings(new ItemStack(Material.DIAMOND_LEGGINGS));
                         player.getEquipment().setBoots(new ItemStack(Material.DIAMOND_BOOTS));
                     }
+                }
                 }
             }else {
                 Bedwars.sendMessage(player,"&cYou do not have enough of the required material!");
@@ -159,4 +193,5 @@ public class ShopListener implements Listener {
 
         return item;
     }
+
 }

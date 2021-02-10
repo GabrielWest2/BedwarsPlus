@@ -37,12 +37,12 @@ admin-help:
       -  "§7/bwa §baddgen <name> <diamond/emerald>"
       -  "§7/bwa §badditemshop"
       -  "§7/bwa §baddteamshop"
-      -  "§8§l§m*-------------§r §d§lPage 1 §b%next_arrow% §8§l§m-------------*";
+      -  "§8§l§m*-------------§r §d§lPage 1 §b%next_arrow% §8§l§m-------------*"
   page2:
       - "\n§8§l§m*---------§r §d§lBedwarsPlus §b§lv%%version§r §8§l§m-----------*"
       -  "§7/bwa §bsave <name>"
       -  "§7/bwa §breload"
-      -  "§8§l§m*-------------§r §d§l%back_arrow% §bPage 2 §8§l§m-------------*";
+      -  "§8§l§m*-------------§r §d§l%back_arrow% §bPage 2 §8§l§m-------------*"
 ################# BossBar #################
 #Bossbar cycle time (in ticks (20 per second))
 bossbardelay: 20

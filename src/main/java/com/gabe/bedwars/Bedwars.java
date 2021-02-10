@@ -20,6 +20,7 @@ import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -106,9 +107,7 @@ public final class Bedwars extends JavaPlugin {
                 "§7/bwa §baddteamshop\n" +
                 "§7/bwa §bsave <name>\n" +
                 "§7/bwa §breload\n" +
-                "§8§l§m*-------------§r §d§lPage 1 §b%next_arrow% §8§l§m-------------*";
-        help2 = " §8§l§m-------------*\n";
-        arrow = message;
+                "§8§l§m*------------------------------------*";
         gamemodes = new HashMap<>();
         saveConfig();
         getCommand("bwa").setTabCompleter(new AdminTabComplete());
@@ -219,24 +218,7 @@ public final class Bedwars extends JavaPlugin {
     }
 
     public void sendHelpMessage(Player player){
-        TextComponent helpMenu = null;
-
-        String[] helpParts = help1.split("%next_arrow%");
-
-        if(helpParts.length>1){
-            helpMenu = new TextComponent(helpParts[0]);
-            for (int i = 0; i< helpParts.length-2; i++){
-                helpMenu.addExtra(arrow);
-                helpMenu.addExtra(helpParts[i+1]);
-            }
-        }else{
-            helpMenu = new TextComponent(help1);
-        }
-
-
-
-
-        player.spigot().sendMessage(helpMenu);
+        player.sendMessage(help1);
     }
 
     /* ---------- COMMANDS ----------- */
@@ -515,6 +497,43 @@ public final class Bedwars extends JavaPlugin {
                 return Color.WHITE;
             case YELLOW:
                 return Color.YELLOW;
+            default:
+                break;
+        }
+
+        return null;
+    }
+
+    public static Material translateChatColorToWool(ChatColor chatColor) {
+        switch (chatColor) {
+            case AQUA:
+                return Material.LIGHT_BLUE_WOOL;
+            case BLACK:
+                return Material.BLACK_WOOL;
+            case BLUE:
+                return Material.LIGHT_BLUE_WOOL;
+            case DARK_AQUA:
+                return Material.CYAN_WOOL;
+            case DARK_BLUE:
+                return Material.BLUE_WOOL;
+            case DARK_GRAY:
+                return Material.GRAY_WOOL;
+            case DARK_GREEN:
+                return Material.GREEN_WOOL;
+            case DARK_PURPLE:
+                return Material.PURPLE_WOOL;
+            case GRAY:
+                return Material.LIGHT_GRAY_WOOL;
+            case GREEN:
+                return Material.LIME_WOOL;
+            case LIGHT_PURPLE:
+                return Material.PINK_WOOL;
+            case RED:
+                return Material.RED_WOOL;
+            case WHITE:
+                return Material.WHITE_WOOL;
+            case YELLOW:
+                return Material.YELLOW_WOOL;
             default:
                 break;
         }
