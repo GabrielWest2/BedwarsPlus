@@ -42,13 +42,55 @@ bossbar - A list of the bossbar messages to be displayed in the waiting lobby
 <h3>Default</h3>     
 
 ```yaml
-servername: mc.server.net
-prefix: '&8[&6BW&8] &8> &e'
-bossbardelay: 60
-bossbar:
-- '&e&lPlaying &f&lBEDWARS &e&lon &a&lYOURSERVER.NET'
-- '&e&lPlaying &f&lBEDWARS &e&lon &b&lYOURSERVER.NET'
-- '&e&lPlaying &f&lBEDWARS &e&lon &6&lYOURSERVER.NET'
+######################################################################################################################
+#  /$$$$$$$                  /$$                                             /$$$$$$$  /$$
+#  | $$__  $$                | $$                                            | $$__  $$| $$
+#  | $$  \ $$  /$$$$$$   /$$$$$$$ /$$  /$$  /$$  /$$$$$$   /$$$$$$   /$$$$$$$| $$  \ $$| $$ /$$   /$$  /$$$$$$$
+#  | $$$$$$$  /$$__  $$ /$$__  $$| $$ | $$ | $$ |____  $$ /$$__  $$ /$$_____/| $$$$$$$/| $$| $$  | $$ /$$_____/
+#  | $$__  $$| $$$$$$$$| $$  | $$| $$ | $$ | $$  /$$$$$$$| $$  \__/|  $$$$$$ | $$____/ | $$| $$  | $$|  $$$$$$
+#  | $$  \ $$| $$_____/| $$  | $$| $$ | $$ | $$ /$$__  $$| $$       \____  $$| $$      | $$| $$  | $$ \____  $$
+#  | $$$$$$$/|  $$$$$$$|  $$$$$$$|  $$$$$/$$$$/|  $$$$$$$| $$       /$$$$$$$/| $$      | $$|  $$$$$$/ /$$$$$$$/
+#  |_______/  \_______/ \_______/ \_____/\___/  \_______/|__/      |_______/ |__/      |__/ \______/ |_______/
+######################################################################################################################
 
+################# CHAT #################
+#The prefix for most in game mesages
+prefix: '&8[&6BW&8] &8> '
+#Main color
+primary-color: '&e'
+#Secondary color
+secondary-color: '&6'
+#The command success message color
+success-color: '&a'
+#The color of error messages
+error-color: '&c'
+
+################# BossBar #################
+#Bossbar cycle time (in ticks (20 per second))
+bossbardelay: 20
+#Bossbar messages
+bossbar:
+ - '&e&lPlaying &f&lBEDWARS &e&lon &a&lYOURSERVER.NET'
+  - '&e&lPlaying &f&lBEDWARS &e&lon &b&lYOURSERVER.NET'
+  - '&e&lPlaying &f&lBEDWARS &e&lon &6&lYOURSERVER.NET'
+################# Scoreboard #################
+#Server name displayed in yellow at the bottom of the scoreboard
+servername: yourserver.net
+#Main scoreboard color
+scoreboard-primary: "&f"
+#Secondary scoreboard color
+scoreboard-secondary: "&a"
+# Team size to mode text
+# Example: 1 player team is 'Solos'
+# Example: 2 player team is 'Duos'
+#
+# Anything not in the list below will display
+# as %teamsize%v%teamsize%v%teamsize% for
+# the amount of teams
+
+gamemodes:
+ - '1:Solos'
+  - '2:Duos'
+  - '3:Trios'
 
 ```
